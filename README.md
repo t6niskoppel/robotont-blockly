@@ -59,7 +59,7 @@ out and do not run. **Stop** or Esc stops the program and the robot, and
 Ctrl+Enter runs it. The program is kept in the browser between visits; **Save**
 and **Open** exchange it as a JSON file.
 
-**Beginner** shows a small block set: move a distance, turn an angle, lights,
+**Basic** shows a small block set: move a distance, turn an angle, lights,
 wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
 motion, velocity, distance, odometry pose, battery and timer readings, RGB
 lights, loops with break, logic, maths, text, variables and functions.
