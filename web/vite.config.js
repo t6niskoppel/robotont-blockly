@@ -2,8 +2,8 @@ import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
 // The browser talks straight to rosbridge (9090), web_video_server (8080) and ttyd (7681) on the
-// machine that runs the ROS stack; this server only hosts the pages. The pages are opened by whatever
-// name the machine has on a private network (localhost, an mDNS .local name, an address), so any host is allowed.
+// machine that runs the ROS stack; this server only hosts the pages.
+
 export default defineConfig({
   server: { allowedHosts: true },
   preview: { allowedHosts: true },
