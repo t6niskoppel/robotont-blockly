@@ -54,11 +54,11 @@ export function compile(workspace) {
           id,
           seconds: fieldNumber(b, 'SECONDS', 0.05, 30),
         });
-      else if (b.type.startsWith('led_'))
+      else if (b.type === 'robot_led')
         out.push({
           op: 'led',
           id,
-          side: b.type.slice(4),
+          side: b.getFieldValue('SIDE'),
           color: b.getFieldValue('COLOR'),
         });
       else if (b.type === 'controls_repeat_ext')

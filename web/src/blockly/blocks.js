@@ -1,14 +1,8 @@
 // The blockly package entry brings in the standard blocks and English messages.
 import * as Blockly from 'blockly';
+import '@blockly/field-colour-hsv-sliders';
 export const directions = ['front', 'back', 'left', 'right'];
-const colors = [
-  ['teal', '#12b8a6'],
-  ['red', '#ef6461'],
-  ['blue', '#4388f3'],
-  ['yellow', '#f7c847'],
-  ['white', '#ffffff'],
-  ['off', '#000000'],
-];
+const colorField = { type: 'field_colour_hsv_sliders', name: 'COLOR', colour: '#0062ff' };
 const number = (name, value, min, max) => ({
   type: 'field_number',
   name,
@@ -79,14 +73,21 @@ const definitions = [
     output: 'Number',
     colour: 215,
   })),
-  ...[...directions, 'all'].map((d) => ({
-    type: `led_${d}`,
-    message0: `LED ${d} %1`,
-    args0: [{ type: 'field_dropdown', name: 'COLOR', options: colors }],
+  {
+    type: 'robot_led',
+    message0: 'LED %1 %2',
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'SIDE',
+        options: [...directions, 'all'].map((d) => [d, d]),
+      },
+      colorField,
+    ],
     previousStatement: null,
     nextStatement: null,
     colour: 315,
-  })),
+  },
 ];
 Blockly.common.defineBlocksWithJsonArray(definitions);
 
@@ -121,10 +122,11 @@ export const toolbox = {
       kind: 'category',
       name: 'LEDs',
       colour: '315',
-      contents: [...directions, 'all'].map((d) => ({
-        kind: 'block',
-        type: `led_${d}`,
-      })),
+      contents: [
+        { kind: 'block', type: 'robot_led', fields: { SIDE: 'all', COLOR: '#0062ff' } },
+        { kind: 'block', type: 'robot_led', fields: { SIDE: 'front', COLOR: '#22c55e' } },
+        { kind: 'block', type: 'robot_led', fields: { SIDE: 'all', COLOR: '#000000' } },
+      ],
     },
     {
       kind: 'category',
@@ -155,18 +157,18 @@ const chain = (blocks) =>
     null,
   );
 const led = (side, color) => ({
-  type: `led_${side}`,
-  fields: { COLOR: color },
+  type: 'robot_led',
+  fields: { SIDE: side, COLOR: color },
 });
 export function example(name) {
   const body =
     name === 'lights'
       ? [
-          led('all', '#4388f3'),
+          led('all', '#0062ff'),
           { type: 'robot_wait', fields: { SECONDS: 0.5 } },
-          led('front', '#ef6461'),
-          led('back', '#f7c847'),
-          led('left', '#12b8a6'),
+          led('front', '#ff0000'),
+          led('back', '#facc15'),
+          led('left', '#00ffe1'),
           led('right', '#ffffff'),
         ]
       : name === 'obstacle'
