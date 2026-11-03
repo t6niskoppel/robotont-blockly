@@ -39,15 +39,12 @@ export class TFTree extends EventTarget {
     this.links = new Map(); // child -> {parent, pose}
     this.callbacks = new Map(); // frame -> Set(callback)
     this.dirty = false;
-    for (const name of ['/tf', '/tf_static']) {
-      const topic = new ROSLIB.Topic({
-        ros,
-        name,
-        messageType: 'tf2_msgs/msg/TFMessage',
-      });
-      topic.subscribe((message) => this.update(message.transforms));
-    }
-    ros.on('close', () => this.links.clear());
+    this.ros = ros;
+    this.topics = [];
+    ros.on('close', () => {
+      this.links.clear();
+      this.topics = []; // the connection is gone; the next subscriber opens new ones
+    });
     this.timer = setInterval(() => {
       if (this.dirty) {
         this.dirty = false;
@@ -97,13 +94,31 @@ export class TFTree extends EventTarget {
       ...new Set([...this.links.keys(), ...[...this.links.values()].map((link) => link.parent)]),
     ];
   }
+  // /tf is one of the busiest topics, so it is only listened to while something wants a frame.
+  listen() {
+    if (this.topics.length) return;
+    for (const name of ['/tf', '/tf_static']) {
+      const topic = new ROSLIB.Topic({
+        ros: this.ros,
+        name,
+        messageType: 'tf2_msgs/msg/TFMessage',
+      });
+      topic.subscribe((message) => this.update(message.transforms));
+      this.topics.push(topic);
+    }
+  }
   subscribe(frame, callback) {
     if (!this.callbacks.has(frame)) this.callbacks.set(frame, new Set());
     this.callbacks.get(frame).add(callback);
     this.dirty = true;
+    this.listen();
   }
   unsubscribe(frame, callback) {
     this.callbacks.get(frame)?.delete(callback);
+    if ([...this.callbacks.values()].some((set) => set.size)) return;
+    for (const topic of this.topics) topic.unsubscribe?.();
+    this.topics = [];
+    this.links.clear();
   }
   publish() {
     for (const [frame, callbacks] of this.callbacks) {

@@ -35,3 +35,25 @@ test('late TF resolves the simulation base frame and transforms scan points', (c
   ros.emit('close');
   assert.equal(tree.lookup('laser_link'), null);
 });
+
+test('/tf is only subscribed while a frame is wanted', (context) => {
+  context.mock.timers.enable({ apis: ['setInterval'] });
+  const open = [];
+  context.mock.method(ROSLIB, 'Topic', function ({ name }) {
+    return {
+      subscribe: () => open.push(name),
+      unsubscribe: () => open.splice(open.indexOf(name), 1),
+    };
+  });
+  const tree = new TFTree(new EventEmitter(), 'base_footprint');
+  assert.deepEqual(open, []);
+  const callback = () => {};
+  tree.subscribe('laser_link', callback);
+  assert.deepEqual(open, ['/tf', '/tf_static']);
+  tree.subscribe('camera_link', callback);
+  assert.equal(open.length, 2);
+  tree.unsubscribe('laser_link', callback);
+  assert.equal(open.length, 2);
+  tree.unsubscribe('camera_link', callback);
+  assert.deepEqual(open, []);
+});
