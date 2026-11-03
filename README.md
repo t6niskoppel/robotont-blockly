@@ -52,6 +52,25 @@ exposes robot controls and a terminal without authentication by default.
 Stop the frontend with `docker compose stop webapp` and the bridge with Ctrl+C.
 Rebuild the frontend image after changing its source.
 
+## Blockly
+
+Programs start from one **when ▶ Run is pressed** block; loose blocks are greyed
+out and do not run. **Stop** or Esc stops the program and the robot, and
+Ctrl+Enter runs it. The program is kept in the browser between visits; **Save**
+and **Open** exchange it as a JSON file.
+
+**Beginner** shows a small block set: move a distance, turn an angle, lights,
+wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
+motion, velocity, distance, odometry pose, battery and timer readings, RGB
+lights, loops with break, logic, maths, text, variables and functions.
+
+The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s, so the result
+depends on how the robot accelerates. Continuous motion keeps going until a stop
+block or the end of the program. Velocity is limited to 0.3 m/s and 1 rad/s.
+
+The ring in the Robot panel shows the light colours the program sent, not what
+the LED module displays; the side panel warns when no LED module is listening.
+
 
 
 ## Source layout
