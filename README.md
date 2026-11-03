@@ -1,4 +1,4 @@
-# robotont_blockly
+# robotont-blockly
 
 ![ROS 2](https://img.shields.io/badge/ROS2-Jazzy-blue.svg) ![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)
 
