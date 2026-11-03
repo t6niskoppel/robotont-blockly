@@ -227,6 +227,22 @@ dd {
 .drive-pad button:active:not(:disabled) {
   background: #cbe8d8;
 }
+.drive-pad button {
+  position: relative;
+}
+.drive-pad kbd {
+  position: absolute;
+  right: 5px;
+  bottom: 2px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #5d8a78;
+}
+.drive-pad button.danger kbd {
+  color: #ffd9db;
+}
 .drive-pad button.danger {
   color: #fff;
   background: #b43b42;
