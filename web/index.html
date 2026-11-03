@@ -9,10 +9,7 @@
   <body>
     <div id="app">
       <header class="site-header">
-        <div class="brand">
-          <span class="brand-icon">R</span>
-          <h1>Robotont <span>web app</span></h1>
-        </div>
+        <h1>Robotont web app</h1>
         <nav class="tabs" aria-label="Pages">
           <a href="/" aria-current="page">Overview</a>
           <a href="/blockly/">Blockly</a>
@@ -129,13 +126,16 @@
                   <option value="right">Right</option>
                 </select></label
               >
+              <div class="hsv">
+                <span id="led-swatch" class="swatch"></span>
+                <label>Hue <input id="led-h" type="range" min="0" max="360" value="210" /></label>
+                <label
+                  >Saturation <input id="led-s" type="range" min="0" max="100" value="100"
+                /></label>
+                <label>Value <input id="led-v" type="range" min="0" max="100" value="100" /></label>
+              </div>
               <div class="color-row">
-                <input
-                  id="led-color"
-                  type="color"
-                  value="#12b8a6"
-                  aria-label="Light color"
-                /><button id="apply-led">Set color</button
+                <button id="apply-led">Set color</button
                 ><button id="off-led" class="secondary">Off</button>
               </div>
               <p id="led-last" class="hint">No light commands sent</p>

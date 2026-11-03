@@ -95,6 +95,7 @@ function setImages() {
     placeholder.dataset.text ??= placeholder.textContent;
     placeholder.textContent = off ? 'Preview off' : placeholder.dataset.text;
     placeholder.hidden = Boolean(source);
+    image.closest('.camera').hidden = off;
     if (!source) element(kind + '-status').textContent = off ? 'Off' : 'No data';
     element(kind + '-toggle').textContent = previews[kind] ? 'Hide' : 'Show';
     element(kind + '-toggle').hidden = !name;
@@ -221,11 +222,23 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // --- Lights -------------------------------------------------------------------------------------
+function ledColor() {
+  const h = Number(element('led-h').value),
+    s = Number(element('led-s').value) / 100,
+    v = Number(element('led-v').value) / 100;
+  const channel = (n) => {
+    const k = (n + h / 60) % 6;
+    return Math.round(255 * (v - v * s * Math.max(0, Math.min(k, 4 - k, 1))));
+  };
+  return '#' + [5, 3, 1].map((n) => channel(n).toString(16).padStart(2, '0')).join('');
+}
+const renderSwatch = () => (element('led-swatch').style.background = ledColor());
+for (const id of ['led-h', 'led-s', 'led-v']) element(id).oninput = renderSwatch;
+renderSwatch();
 element('apply-led').onclick = () =>
   attempt(() => {
-    control.led(element('led-side').value, element('led-color').value);
-    element('led-last').textContent =
-      `Last command: ${element('led-side').value} ${element('led-color').value}`;
+    control.led(element('led-side').value, ledColor());
+    element('led-last').textContent = `Last command: ${element('led-side').value} ${ledColor()}`;
     log('Light color sent');
   });
 element('off-led').onclick = () =>
@@ -241,10 +254,11 @@ function renderControls() {
   for (const button of document.querySelectorAll('[data-drive]')) button.disabled = !ready;
   element('drive-status').textContent = ready ? 'Ready' : 'No robot';
   element('led-status').textContent = robot?.led ? 'Available' : 'Unavailable';
-  element('led-note').textContent = robot?.led
-    ? 'Colors are set in manual mode; the first command stops the start-up animation.'
-    : 'No LED module is listening on this robot.';
-  for (const id of ['led-side', 'led-color', 'apply-led', 'off-led'])
+  element('led-note').textContent = robot
+    ? 'No LED module is listening on this robot.'
+    : 'Waiting for the LED module';
+  element('led-note').hidden = Boolean(robot?.led);
+  for (const id of ['led-side', 'led-h', 'led-s', 'led-v', 'apply-led', 'off-led'])
     element(id).disabled = !ready || !robot?.led;
 }
 function renderImageStatus() {
@@ -312,8 +326,10 @@ for (const kind of ['rgb', 'depth'])
     savePreviews();
     setImages();
   };
-const renderScanToggle = () =>
-  (element('scan-toggle').textContent = previews.scan ? 'Hide' : 'Show');
+const renderScanToggle = () => {
+  element('scan-toggle').textContent = previews.scan ? 'Hide' : 'Show';
+  for (const id of ['scene', 'view-follow', 'view-top']) element(id).hidden = !previews.scan;
+};
 element('scan-toggle').onclick = () => {
   previews.scan = !previews.scan;
   savePreviews();

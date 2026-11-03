@@ -9,10 +9,7 @@
   <body>
     <div id="app">
       <header class="site-header">
-        <div class="brand">
-          <span class="brand-icon">R</span>
-          <h1>Robotont <span>web app</span></h1>
-        </div>
+        <h1>Robotont web app</h1>
         <nav class="tabs" aria-label="Pages">
           <a href="/">Overview</a>
           <a href="/blockly/">Blockly</a>
@@ -33,10 +30,15 @@
         <div class="status-grid">
           <section class="card">
             <div class="card-title">
-              <h3>Topics</h3>
-              <span id="topics-count" class="tag">0</span>
+              <h3>Topics <span id="topics-count" class="tag">0</span></h3>
+              <span>
+                <button id="topics-update" class="secondary small">Update</button>
+                <button id="topics-expand" class="secondary small">Expand all</button>
+                <button id="topics-collapse" class="secondary small">Collapse all</button>
+              </span>
             </div>
-            <table id="topics" class="topics"></table>
+            <p id="topics-note" class="hint">Rates are measured for a few seconds when you press Update.</p>
+            <div id="topics" class="tree"></div>
           </section>
           <section class="card">
             <div class="card-title">

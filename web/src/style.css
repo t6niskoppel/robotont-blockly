@@ -50,9 +50,7 @@ button.danger {
   border-color: #b43b42;
 }
 main {
-  max-width: 1600px;
-  margin: auto;
-  padding: 30px 4vw;
+  padding: 24px 2vw;
 }
 .overview {
   display: flex;
@@ -113,6 +111,13 @@ aside {
   flex-direction: column;
   gap: 20px;
 }
+@media (min-width: 1300px) {
+  .sensors {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
 .card {
   background: #fff;
   border: 1px solid #dce5df;
@@ -141,13 +146,13 @@ h3 {
 }
 .camera-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 18px;
 }
 .camera {
   background: #1d2924;
   border-radius: 8px;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   position: relative;
   display: grid;
   place-items: center;
@@ -371,7 +376,7 @@ footer {
 }
 .scene {
   position: relative;
-  height: 380px;
+  height: 260px;
   border-radius: 8px;
   overflow: hidden;
   background: #f5f8f7;
@@ -392,22 +397,71 @@ button.small {
   grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
-.topics {
-  width: 100%;
-  border-collapse: collapse;
+.tree-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(0, 1.2fr) 80px 120px;
+  gap: 12px;
+  padding: 5px 4px;
   font-size: 13px;
-}
-.topics th,
-.topics td {
-  text-align: left;
-  padding: 7px 4px;
   border-bottom: 1px solid #edf2ee;
 }
-.topics th {
-  width: 120px;
-  color: #6a8075;
+.tree-row span:nth-child(n + 2) {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #5d766b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tree-name {
+  font-family: ui-monospace, monospace;
+}
+.tree-name {
+  padding-left: calc(var(--depth, 0) * 18px);
+}
+.tree-name::before {
+  content: '';
+  display: inline-block;
+  width: 1.4em;
+}
+.tree summary {
+  list-style: none;
+  cursor: pointer;
   font-weight: 600;
 }
-.topics td {
-  font-family: ui-monospace, monospace;
+.tree summary::-webkit-details-marker {
+  display: none;
+}
+.tree summary .tree-name::before {
+  content: '\25B8';
+}
+.tree details[open] > summary .tree-name::before {
+  content: '\25BE';
+}
+.tree details > summary:hover {
+  background: #f4f8f5;
+}
+.hsv {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 4px 12px;
+  align-items: center;
+  margin: 12px 0;
+}
+.hsv label {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  align-items: center;
+  font-size: 12px;
+  color: #6a8075;
+}
+.swatch {
+  display: block;
+  grid-row: 1 / span 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #cbd9d2;
 }
