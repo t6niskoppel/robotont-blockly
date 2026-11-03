@@ -1,4 +1,5 @@
 import '../site.css';
+import { registerContinuousToolbox } from '@blockly/continuous-toolbox';
 import { Blockly, toolboxes, theme, startupProgram } from './blocks.js';
 import { compile } from './compiler.js';
 import { Runner } from './runtime.js';
@@ -25,8 +26,15 @@ const store = (key, value) => {
 };
 
 let level = stored('robotont-blockly-level') === '2' ? '2' : '1';
+// One scrolling list of every block; the categories jump to their part of it.
+registerContinuousToolbox();
 const workspace = Blockly.inject('workspace', {
   toolbox: toolboxes[level],
+  plugins: {
+    flyoutsVerticalToolbox: 'ContinuousFlyout',
+    metricsManager: 'ContinuousMetrics',
+    toolbox: 'ContinuousToolbox',
+  },
   theme,
   renderer: 'zelos',
   trashcan: true,
@@ -35,6 +43,8 @@ const workspace = Blockly.inject('workspace', {
   zoom: { controls: true, wheel: true, startScale: 0.9, pinch: true },
   move: { scrollbars: true, drag: true, wheel: true },
 });
+// Recycled blocks stay behind when the list is rebuilt, so every visit builds them fresh.
+workspace.getFlyout().setRecyclingEnabled(false);
 new ResizeObserver(() => Blockly.svgResize(workspace)).observe(element('workspace'));
 // Loose blocks are greyed out so it is clear they will not run.
 workspace.addChangeListener(Blockly.Events.disableOrphans);
@@ -108,6 +118,7 @@ for (const button of document.querySelectorAll('[data-level]'))
     level = button.dataset.level;
     store('robotont-blockly-level', level);
     workspace.updateToolbox(toolboxes[level]);
+    workspace.getToolbox().refreshSelection(); // rebuild the scrolling list
     showLevel();
   };
 showLevel();

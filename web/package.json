@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@blockly/block-plus-minus": "13.4.0",
+    "@blockly/continuous-toolbox": "13.4.0",
     "@blockly/field-colour-hsv-sliders": "13.4.0",
     "@blockly/field-slider": "13.4.0",
     "@blockly/toolbox-search": "13.4.0",
