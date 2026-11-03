@@ -20,43 +20,71 @@
           <span id="online" class="dot"></span><span id="connection">Connecting…</span>
         </div>
       </header>
-      <nav class="toolbar" aria-label="Program settings">
-        <label
-          >Example
-          <select id="example">
-            <option value="motion">Move and turn</option>
-            <option value="obstacle">Front obstacle</option>
-            <option value="lights">Directional lights</option>
-          </select></label
-        >
-        <button id="save" class="secondary">Save program</button
-        ><button id="load" class="secondary">Load program</button>
+      <nav class="toolbar" aria-label="Program tools">
+        <div class="segmented" role="group" aria-label="Block set">
+          <button id="level-1" data-level="1">Beginner</button
+          ><button id="level-2" data-level="2">All blocks</button>
+        </div>
+        <select id="example" aria-label="Load an example">
+          <option value="">Examples…</option>
+        </select>
+        <span class="spacer"></span>
+        <button id="undo" class="icon" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button
+        ><button id="redo" class="icon" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button
+        ><button id="tidy" class="icon" title="Tidy up the blocks" aria-label="Tidy up">⇅</button
+        ><button id="clear" class="icon" title="Start a new program" aria-label="New program">
+          ✕
+        </button>
+        <button id="save" class="secondary">Save</button
+        ><button id="load" class="secondary">Open</button>
         <input id="file" type="file" accept=".json,application/json" hidden />
       </nav>
       <main>
-        <div class="editor">
+        <section class="editor">
           <div id="workspace" aria-label="Blockly program editor"></div>
+          <div id="banner" class="banner" hidden></div>
           <div class="run-controls">
-            <button id="run">▶ Run</button><button id="stop" class="stop">■ Stop</button>
+            <button id="run" class="run" title="Run the program (Ctrl+Enter)">
+              <span aria-hidden="true">▶</span> Run
+            </button>
+            <button id="stop" class="stop" title="Stop the program and the robot (Esc)">
+              <span aria-hidden="true">■</span> Stop
+            </button>
           </div>
-        </div>
+        </section>
         <aside>
-          <h2>Robot view</h2>
-          <div class="view-controls">
-            <button id="follow" class="secondary">Follow</button
-            ><button id="top" class="secondary">Top down</button
-            ><button id="scan-toggle" class="secondary">Hide lidar</button
-            ><button id="camera-toggle" class="secondary">Hide camera</button>
-          </div>
-          <div id="scene" class="scene"></div>
-          <div class="camera">
-            <img id="camera" alt="Robot camera" hidden />
-            <p id="camera-note">No camera</p>
-          </div>
-          <h2>Obstacle distances</h2>
-          <dl id="distances"></dl>
-          <h2>Program log</h2>
-          <ol id="log" aria-live="polite"></ol>
+          <article class="card">
+            <div class="card-title">
+              <h2>Robot</h2>
+              <span id="battery" class="tag">Battery —</span>
+            </div>
+            <svg id="status" viewBox="-145 -122 290 244" role="img" aria-labelledby="status-title">
+              <title id="status-title">Lights and obstacle distances around the robot</title>
+            </svg>
+            <p class="hint" id="led-note">Lights show the colours the program sent.</p>
+          </article>
+          <article class="card">
+            <div class="card-title">
+              <h2>Program log</h2>
+              <button id="clear-log" class="link">Clear</button>
+            </div>
+            <ol id="log" aria-live="polite"></ol>
+          </article>
+          <details class="card" open>
+            <summary><h2>3D view</h2></summary>
+            <div class="view-controls">
+              <button id="follow" class="secondary small">Follow</button
+              ><button id="top" class="secondary small">Top down</button>
+            </div>
+            <div id="scene" class="scene"></div>
+          </details>
+          <details class="card" open>
+            <summary><h2>Camera</h2></summary>
+            <div class="camera">
+              <img id="camera" alt="Robot camera" hidden />
+              <p id="camera-note">No camera</p>
+            </div>
+          </details>
         </aside>
       </main>
     </div>

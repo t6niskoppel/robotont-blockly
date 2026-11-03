@@ -79,4 +79,23 @@ export class RobotControl {
   distance(direction) {
     return this.connection.distance(direction);
   }
+
+  pose() {
+    const odom = this.fresh('odom', 'Odometry');
+    return { x: odom.x, y: odom.y, yaw: odom.yaw };
+  }
+
+  battery() {
+    const percentage = this.fresh('battery', 'Battery').percentage;
+    if (percentage === null) throw new Error('The battery level is unknown');
+    return Math.round(percentage * 100);
+  }
+
+  fresh(key, label) {
+    this.requireRobot();
+    const reading = this.connection.telemetry[key];
+    if (!reading || performance.now() - reading.at > 2000)
+      throw new Error(`${label} is unavailable`);
+    return reading.data;
+  }
 }

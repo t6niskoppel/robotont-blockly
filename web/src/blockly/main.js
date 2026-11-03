@@ -1,79 +1,131 @@
 import '../site.css';
-import { Blockly, toolbox, example } from './blocks.js';
+import { Blockly, toolboxes, theme, example, exampleTitles } from './blocks.js';
 import { compile } from './compiler.js';
 import { Runner } from './runtime.js';
+import { StatusView } from './status_view.js';
 import { RobotConnection } from '../ros_connection.js';
 import { RobotControl } from '../robot_control.js';
 import { RobotViewer } from '../viewer.js';
-import { previews, savePreviews } from '../previews.js';
 
 const element = (id) => document.getElementById(id);
+// Browser storage is a convenience: it can be missing (private windows), so every access is guarded.
+const stored = (key, fallback = null) => {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+const store = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Not saved; the page still works.
+  }
+};
+
+let level = stored('robotont-blockly-level') === '2' ? '2' : '1';
 const workspace = Blockly.inject('workspace', {
-  toolbox,
+  toolbox: toolboxes[level],
+  theme,
+  renderer: 'zelos',
   trashcan: true,
   media: '/vendor/media/',
-  zoom: { controls: true, wheel: true, startScale: 0.9 },
+  grid: { spacing: 24, length: 2, colour: '#d5e2dc', snap: true },
+  zoom: { controls: true, wheel: true, startScale: 0.9, pinch: true },
   move: { scrollbars: true, drag: true, wheel: true },
 });
 new ResizeObserver(() => Blockly.svgResize(workspace)).observe(element('workspace'));
+// Loose blocks are greyed out so it is clear they will not run.
+workspace.addChangeListener(Blockly.Events.disableOrphans);
+
 const connection = new RobotConnection();
 const control = new RobotControl(connection);
 const viewer = new RobotViewer(element('scene'), connection);
+const status = new StatusView(element('status'));
 element('follow').onclick = () => viewer.follow();
 element('top').onclick = () => viewer.topDown();
-if (!previews.scan) viewer.setScan(false);
-element('scan-toggle').onclick = () => {
-  previews.scan = !previews.scan;
-  savePreviews();
-  viewer.setScan(previews.scan);
-  render();
-};
-element('camera-toggle').onclick = () => {
-  previews.rgb = !previews.rgb;
-  savePreviews();
-  render();
-};
 let runner = null;
-const log = (message) => {
+let started = 0;
+
+const log = (message, kind = 'info') => {
   const item = document.createElement('li');
-  item.textContent = message;
+  item.className = kind;
+  const time = document.createElement('time');
+  time.textContent = runner ? `${((performance.now() - started) / 1000).toFixed(1)} s` : '';
+  item.append(time, document.createTextNode(message));
   element('log').prepend(item);
-  while (element('log').children.length > 40) element('log').lastChild.remove();
+  while (element('log').children.length > 60) element('log').lastChild.remove();
 };
-const busy = (value) => {
-  for (const id of ['run', 'example', 'load']) element(id).disabled = value;
+element('clear-log').onclick = () => element('log').replaceChildren();
+
+const banner = (message, kind) => {
+  element('banner').hidden = !message;
+  element('banner').textContent = message || '';
+  element('banner').className = `banner ${kind || ''}`;
 };
-const loadExample = () => {
+
+// Programs: autosaved in this browser, examples, files.
+const save = () =>
+  store(
+    'robotont-blockly-program',
+    JSON.stringify(Blockly.serialization.workspaces.save(workspace)),
+  );
+const load = (data) => {
   workspace.clear();
-  Blockly.serialization.workspaces.load(example(element('example').value), workspace);
+  Blockly.serialization.workspaces.load(data, workspace);
+  workspace.scrollCenter();
 };
-loadExample();
-element('example').onchange = loadExample;
-element('run').onclick = async () => {
-  try {
-    const program = compile(workspace);
-    runner = new Runner(control, {
-      onLog: log,
-      onStep: (id) => workspace.highlightBlock(id),
-    });
-    busy(true);
-    await runner.run(program);
-  } catch (error) {
-    log(error.message);
-  } finally {
-    busy(false);
-    runner = null;
-    render();
-  }
+try {
+  const saved = JSON.parse(stored('robotont-blockly-program'));
+  if (!saved) throw new Error('nothing saved');
+  load(saved);
+} catch {
+  load(example('square'));
+}
+let saveTimer;
+workspace.addChangeListener((event) => {
+  if (event.isUiEvent) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 500);
+  if (!runner) banner(null);
+});
+
+for (const [name, title] of Object.entries(exampleTitles))
+  element('example').append(new Option(title, name));
+element('example').onchange = () => {
+  const name = element('example').value;
+  element('example').value = '';
+  if (!name) return;
+  if (
+    workspace.getAllBlocks(false).length > 1 &&
+    !confirm('Replace your program with this example?')
+  )
+    return;
+  load(example(name));
+  log(`Example loaded: ${exampleTitles[name]}`);
 };
-element('stop').onclick = async () => {
-  try {
-    await (runner ? runner.stop() : control.stop());
-    log('Stop requested');
-  } catch (error) {
-    log(error.message);
-  }
+element('clear').onclick = () => {
+  if (workspace.getAllBlocks(false).length > 1 && !confirm('Start a new, empty program?')) return;
+  load({ blocks: { languageVersion: 0, blocks: [{ type: 'robot_start', x: 40, y: 40 }] } });
 };
+element('undo').onclick = () => workspace.undo(false);
+element('redo').onclick = () => workspace.undo(true);
+element('tidy').onclick = () => workspace.cleanUp();
+
+const showLevel = () => {
+  for (const button of document.querySelectorAll('[data-level]'))
+    button.setAttribute('aria-pressed', String(button.dataset.level === level));
+};
+for (const button of document.querySelectorAll('[data-level]'))
+  button.onclick = () => {
+    level = button.dataset.level;
+    store('robotont-blockly-level', level);
+    workspace.updateToolbox(toolboxes[level]);
+    showLevel();
+  };
+showLevel();
+
 element('save').onclick = () => {
   const url = URL.createObjectURL(
     new Blob([JSON.stringify(Blockly.serialization.workspaces.save(workspace), null, 2)], {
@@ -94,33 +146,111 @@ element('file').onchange = async (event) => {
     if (file.size > 1000000) throw new Error('Program file is too large');
     const data = JSON.parse(await file.text());
     const previous = Blockly.serialization.workspaces.save(workspace);
+    // Unfinished programs open too; Run reports what is missing.
     try {
-      workspace.clear();
-      Blockly.serialization.workspaces.load(data, workspace);
+      load(data);
     } catch (error) {
-      workspace.clear();
-      Blockly.serialization.workspaces.load(previous, workspace);
+      load(previous);
       throw error;
     }
-    log('Program loaded');
+    log('Program opened');
   } catch (error) {
-    log('Cannot load program: ' + error.message);
+    log('Cannot open program: ' + error.message, 'error');
   } finally {
     event.target.value = '';
   }
 };
-function stopProgram() {
-  if (runner) runner.stop();
-  else control.stop();
+
+// The interpreter drives the robot through this; lights are also drawn in the status view.
+let warnedLeds = false;
+const robot = {
+  move: (direction, speed) => control.move(direction, speed),
+  turn: (direction, speed) => control.turn(direction, speed),
+  drive: (velocity) => control.drive(velocity),
+  stop: () => control.stop(),
+  distance: (direction) => control.distance(direction),
+  pose: () => control.pose(),
+  battery: () => control.battery(),
+  led(side, color) {
+    control.led(side, color);
+    status.led(side, color);
+    if (!connection.robot?.led && !warnedLeds) {
+      warnedLeds = true;
+      log(
+        'This robot has no LED module listening (the simulation has none). Colours are only shown here.',
+      );
+    }
+  },
+};
+
+const busy = (value) => {
+  for (const id of ['example', 'load', 'clear']) element(id).disabled = value;
+  document.body.classList.toggle('running', value);
+};
+async function run() {
+  if (runner || element('run').disabled) return;
+  let program;
+  try {
+    program = compile(workspace);
+  } catch (error) {
+    banner(error.message, 'error');
+    log(error.message, 'error');
+    if (error.blockId) {
+      workspace.centerOnBlock(error.blockId);
+      workspace.getBlockById(error.blockId)?.select();
+    }
+    return;
+  }
+  runner = new Runner(robot, {
+    onLog: log,
+    onStep: (id) => workspace.highlightBlock(id),
+  });
+  started = performance.now();
+  warnedLeds = false;
+  status.clearLeds();
+  busy(true);
+  banner('Running… press Stop or Esc to stop the robot.', 'running');
+  render();
+  try {
+    await runner.run(program);
+    banner(null);
+  } catch (error) {
+    banner(error.message, 'error');
+    log(error.message, 'error');
+  } finally {
+    busy(false);
+    runner = null;
+    render();
+  }
 }
-window.addEventListener('pagehide', stopProgram);
-window.addEventListener('blur', stopProgram);
-connection.addEventListener('beforeselect', stopProgram);
+async function stop() {
+  try {
+    await (runner ? runner.stop() : control.stop());
+  } catch (error) {
+    log(error.message, 'error');
+  }
+}
+element('run').onclick = run;
+element('stop').onclick = () => {
+  stop();
+  log('Stop requested');
+};
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') stop();
+  else if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+    event.preventDefault();
+    run();
+  }
+});
+
+window.addEventListener('pagehide', stop);
+window.addEventListener('blur', stop);
+connection.addEventListener('beforeselect', stop);
 connection.addEventListener('connection', () => {
-  if (!connection.connected) stopProgram();
+  if (!connection.connected) stop();
 });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) stopProgram();
+  if (document.hidden) stop();
 });
 
 function render() {
@@ -132,17 +262,17 @@ function render() {
       ? `Connected to ${robot.name}`
       : 'No robot found';
   element('run').disabled = !connection.ready || Boolean(runner);
-  element('scan-toggle').textContent = previews.scan ? 'Hide lidar' : 'Show lidar';
-  element('camera-toggle').textContent = previews.rgb ? 'Hide camera' : 'Show camera';
-  element('camera-toggle').hidden = !robot?.topics.rgb;
-  const source =
-    robot?.topics.rgb && previews.rgb
-      ? connection.videoUrl(robot.topics.rgb, {
-          width: 320,
-          height: 180,
-          transport: robot.rgb_transport || 'raw',
-        })
-      : '';
+  element('led-note').textContent =
+    robot && !robot.led
+      ? 'No LED module on this robot: the ring shows the colours the program sent.'
+      : 'The ring shows the colours the program sent.';
+  const source = robot?.topics.rgb
+    ? connection.videoUrl(robot.topics.rgb, {
+        width: 320,
+        height: 180,
+        transport: robot.rgb_transport || 'raw',
+      })
+    : '';
   if (element('camera').dataset.source !== source) {
     element('camera').dataset.source = source;
     if (source) element('camera').src = source;
@@ -150,25 +280,18 @@ function render() {
   }
   element('camera').hidden = !source;
   element('camera-note').hidden = Boolean(source) && Boolean(element('camera').naturalWidth);
-  element('camera-note').textContent = source
-    ? 'Waiting for camera frames…'
-    : robot?.topics.rgb
-      ? 'Camera preview off'
-      : 'No camera';
+  element('camera-note').textContent = source ? 'Waiting for camera frames…' : 'No camera';
 }
-function showDistances() {
-  element('distances').replaceChildren();
-  for (const direction of ['front', 'back', 'left', 'right']) {
-    const label = document.createElement('dt');
-    label.textContent = direction;
-    const value = document.createElement('dd');
-    const reading = connection.distances[connection.selected]?.[direction];
-    value.textContent = reading?.available
-      ? `${reading.value.toFixed(2)} m${reading.clear ? ' or more' : ''}`
-      : 'Unavailable';
-    value.title = reading?.reason || '';
-    element('distances').append(label, value);
-  }
+function showBattery() {
+  const battery = connection.telemetry.battery?.data;
+  element('battery').textContent =
+    battery?.percentage != null
+      ? `Battery ${Math.round(battery.percentage * 100)}%`
+      : battery?.voltage != null
+        ? `Battery ${battery.voltage.toFixed(1)} V`
+        : 'Battery —';
+  element('battery').dataset.state =
+    battery?.percentage != null && battery.percentage < 0.2 ? 'low' : '';
 }
 setInterval(() => {
   const image = element('camera');
@@ -178,6 +301,11 @@ setInterval(() => {
   }
 }, 1000);
 for (const name of ['connection', 'robots', 'select']) connection.addEventListener(name, render);
-connection.addEventListener('distances', showDistances);
+connection.addEventListener('distances', () =>
+  status.distances(connection.distances[connection.selected]),
+);
+connection.addEventListener('telemetry', showBattery);
+connection.addEventListener('select', () => status.clearLeds());
 render();
-showDistances();
+showBattery();
+status.distances();
