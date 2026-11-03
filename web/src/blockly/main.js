@@ -1,5 +1,5 @@
 import '../site.css';
-import { Blockly, toolboxes, theme, example, exampleTitles } from './blocks.js';
+import { Blockly, toolboxes, theme, startupProgram } from './blocks.js';
 import { compile } from './compiler.js';
 import { Runner } from './runtime.js';
 import { StatusView } from './status_view.js';
@@ -65,7 +65,7 @@ const banner = (message, kind) => {
   element('banner').className = `banner ${kind || ''}`;
 };
 
-// Programs: autosaved in this browser, examples, files.
+// Programs: autosaved in this browser, and files.
 const save = () =>
   store(
     'robotont-blockly-program',
@@ -81,7 +81,7 @@ try {
   if (!saved) throw new Error('nothing saved');
   load(saved);
 } catch {
-  load(example('square'));
+  load(startupProgram());
 }
 let saveTimer;
 workspace.addChangeListener((event) => {
@@ -91,20 +91,6 @@ workspace.addChangeListener((event) => {
   if (!runner) banner(null);
 });
 
-for (const [name, title] of Object.entries(exampleTitles))
-  element('example').append(new Option(title, name));
-element('example').onchange = () => {
-  const name = element('example').value;
-  element('example').value = '';
-  if (!name) return;
-  if (
-    workspace.getAllBlocks(false).length > 1 &&
-    !confirm('Replace your program with this example?')
-  )
-    return;
-  load(example(name));
-  log(`Example loaded: ${exampleTitles[name]}`);
-};
 element('clear').onclick = () => {
   if (workspace.getAllBlocks(false).length > 1 && !confirm('Start a new, empty program?')) return;
   load({ blocks: { languageVersion: 0, blocks: [{ type: 'robot_start', x: 40, y: 40 }] } });
@@ -184,7 +170,7 @@ const robot = {
 };
 
 const busy = (value) => {
-  for (const id of ['example', 'load', 'clear']) element(id).disabled = value;
+  for (const id of ['load', 'clear']) element(id).disabled = value;
   document.body.classList.toggle('running', value);
 };
 async function run() {

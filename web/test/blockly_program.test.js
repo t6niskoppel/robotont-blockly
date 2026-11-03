@@ -6,7 +6,7 @@ globalThis.HTMLElement ??= class {};
 globalThis.document ??= {
   createElement: () => Object.assign(new HTMLElement(), { style: {}, classList: { add() {} } }),
 };
-import { Blockly, example, exampleTitles, STEP_SPEED } from '../src/blockly/blocks.js';
+import { Blockly, startupProgram, STEP_SPEED } from '../src/blockly/blocks.js';
 import { compile } from '../src/blockly/compiler.js';
 import { Runner } from '../src/blockly/runtime.js';
 
@@ -42,10 +42,9 @@ const fakeRobot = () => {
   };
 };
 
-for (const name of Object.keys(exampleTitles))
-  test(`example “${name}” loads and compiles`, () => {
-    withWorkspace(example(name), (workspace) => assert.ok(compile(workspace).main.length > 0));
-  });
+test('the startup program loads and compiles', () => {
+  withWorkspace(startupProgram(), (workspace) => assert.ok(compile(workspace).main.length > 0));
+});
 
 test('programs saved with the first block set still compile', () => {
   const program = withWorkspace(

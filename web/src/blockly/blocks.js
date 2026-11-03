@@ -398,169 +398,29 @@ const level2 = {
 };
 export const toolboxes = { 1: level1, 2: level2 };
 
-// Example programs: a level, a title and the blocks inside "when Run is pressed".
-const chain = (blocks) =>
-  blocks.reduceRight((next, b) => ({ ...b, ...(next ? { next: { block: next } } : {}) }), null);
-const led = (side, color) => ({ type: 'robot_led', fields: { SIDE: side, COLOR: color } });
-const wait = (seconds) => ({ type: 'robot_wait', fields: { SECONDS: seconds } });
-const statements = (blocks) => ({ block: chain(blocks) });
-const obstacle = (direction, metres) => ({
-  type: 'robot_obstacle',
-  fields: { DIRECTION: direction, METRES: metres },
-});
-const examples = {
-  square: {
-    title: 'Drive a square',
-    body: [
-      led('all', '#22c55e'),
-      {
-        type: 'controls_repeat_ext',
-        inputs: {
-          TIMES: num(4),
-          DO: statements([
-            { type: 'robot_move_distance', fields: { DIRECTION: 'front', METRES: 0.5 } },
-            { type: 'robot_turn_angle', fields: { DIRECTION: 'left', DEGREES: 90 } },
-          ]),
-        },
-      },
-      led('all', '#000000'),
-    ],
-  },
-  'stop-at-wall': {
-    title: 'Stop before a wall',
-    body: [
-      led('front', '#22c55e'),
-      { type: 'robot_drive', fields: { DIRECTION: 'front', SPEED: 0.1 } },
-      { type: 'robot_wait_until', inputs: { CONDITION: { block: obstacle('front', 0.5) } } },
-      { type: 'robot_stop' },
-      led('front', '#ef4444'),
-    ],
-  },
-  avoid: {
-    title: 'Avoid obstacles',
-    body: [
-      {
-        type: 'robot_forever',
-        inputs: {
-          DO: statements([
-            {
-              type: 'controls_if',
-              extraState: { hasElse: true },
-              inputs: {
-                IF0: { block: obstacle('front', 0.5) },
-                DO0: statements([
-                  led('all', '#f97316'),
-                  { type: 'robot_turn_angle', fields: { DIRECTION: 'left', DEGREES: 45 } },
-                ]),
-                ELSE: statements([
-                  led('all', '#22c55e'),
-                  { type: 'robot_drive', fields: { DIRECTION: 'front', SPEED: 0.1 } },
-                ]),
-              },
-            },
-            wait(0.1),
-          ]),
-        },
-      },
-    ],
-  },
-  police: {
-    title: 'Police lights',
-    body: [
-      {
-        type: 'controls_repeat_ext',
-        inputs: {
-          TIMES: num(6),
-          DO: statements([
-            led('left', '#ef4444'),
-            led('right', '#3b82f6'),
-            wait(0.5),
-            led('left', '#3b82f6'),
-            led('right', '#ef4444'),
-            wait(0.5),
-          ]),
-        },
-      },
-      led('all', '#000000'),
-    ],
-  },
-  'distance-colours': {
-    title: 'Distance colours',
-    variables: [{ name: 'distance', id: 'distance' }],
-    body: [
-      {
-        type: 'robot_forever',
-        inputs: {
-          DO: statements([
-            {
-              type: 'variables_set',
-              fields: { VAR: { id: 'distance' } },
-              inputs: {
-                VALUE: { block: { type: 'robot_distance', fields: { DIRECTION: 'front' } } },
-              },
-            },
-            {
-              type: 'controls_if',
-              extraState: { elseIfCount: 1, hasElse: true },
-              inputs: {
-                IF0: { block: compare('LT', 0.4) },
-                DO0: statements([led('all', '#ef4444')]),
-                IF1: { block: compare('LT', 1) },
-                DO1: statements([led('all', '#facc15')]),
-                ELSE: statements([led('all', '#22c55e')]),
-              },
-            },
-            {
-              type: 'robot_say',
-              inputs: {
-                TEXT: {
-                  block: {
-                    type: 'text_join',
-                    extraState: { itemCount: 3 },
-                    inputs: {
-                      ADD0: { block: { type: 'text', fields: { TEXT: 'Front: ' } } },
-                      ADD1: { block: variable() },
-                      ADD2: { block: { type: 'text', fields: { TEXT: ' m' } } },
-                    },
-                  },
+// The program the page starts with: move, then turn.
+export function startupProgram() {
+  return {
+    blocks: {
+      languageVersion: 0,
+      blocks: [
+        {
+          type: 'robot_start',
+          x: 40,
+          y: 40,
+          inputs: {
+            DO: {
+              block: {
+                type: 'robot_move_distance',
+                fields: { DIRECTION: 'front', METRES: 0.5 },
+                next: {
+                  block: { type: 'robot_turn_angle', fields: { DIRECTION: 'left', DEGREES: 90 } },
                 },
               },
             },
-            wait(1),
-          ]),
+          },
         },
-      },
-    ],
-  },
-  motion: {
-    title: 'Move and turn',
-    body: [
-      { type: 'robot_move', fields: { DIRECTION: 'front', SPEED: 0.15, SECONDS: 1 } },
-      { type: 'robot_turn', fields: { DIRECTION: 'left', SPEED: 0.5, SECONDS: 1 } },
-      { type: 'robot_stop' },
-    ],
-  },
-};
-function variable() {
-  return { type: 'variables_get', fields: { VAR: { id: 'distance' } } };
-}
-function compare(op, metres) {
-  return {
-    type: 'logic_compare',
-    fields: { OP: op },
-    inputs: { A: { block: variable() }, B: num(metres) },
-  };
-}
-export const exampleTitles = Object.fromEntries(
-  Object.entries(examples).map(([name, e]) => [name, e.title]),
-);
-export function example(name) {
-  const { body, variables } = examples[name];
-  return {
-    ...(variables ? { variables } : {}),
-    blocks: {
-      languageVersion: 0,
-      blocks: [{ type: 'robot_start', x: 40, y: 40, inputs: { DO: statements(body) } }],
+      ],
     },
   };
 }
