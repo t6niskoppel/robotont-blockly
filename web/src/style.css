@@ -74,16 +74,15 @@ h2 {
   color: #7b8d84;
 }
 .metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 22px;
+  display: flex;
+  gap: 14px;
 }
 .metrics article {
   background: #fff;
   border: 1px solid #dce5df;
   border-radius: 12px;
-  padding: 18px 22px;
+  padding: 14px 22px;
+  min-width: 190px;
 }
 .metrics span,
 .metrics small {
@@ -92,10 +91,10 @@ h2 {
 }
 .metrics strong {
   display: block;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 550;
   letter-spacing: -0.5px;
-  margin: 9px 0 5px;
+  margin: 6px 0 4px;
 }
 .metrics small {
   font-size: 12px;
@@ -114,8 +113,11 @@ aside {
 @media (min-width: 1300px) {
   .sensors {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     align-items: start;
+  }
+  .camera-grid[hidden] ~ .card {
+    grid-column: 1 / -1;
   }
 }
 .card {
@@ -133,6 +135,7 @@ aside {
   gap: 10px;
 }
 h3 {
+  white-space: nowrap;
   font-size: 15px;
   font-weight: 650;
   margin: 0;
@@ -329,9 +332,12 @@ footer {
   }
   .metrics {
     gap: 8px;
+    width: 100%;
   }
   .metrics article {
     padding: 12px;
+    min-width: 0;
+    flex: 1;
   }
   .metrics strong {
     font-size: 17px;
@@ -359,7 +365,7 @@ footer {
     grid-template-columns: 1fr;
   }
   .metrics {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
   .metrics article {
     display: grid;
