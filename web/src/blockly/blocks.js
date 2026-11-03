@@ -5,9 +5,8 @@ import '@blockly/field-slider';
 import '@blockly/block-plus-minus';
 import '@blockly/toolbox-search';
 export const directions = ['front', 'back', 'left', 'right'];
-// Fixed speeds for the distance and angle blocks, which are timed: distance / speed.
-export const STEP_SPEED = 0.15; // m/s
-export const TURN_SPEED = 0.5; // rad/s
+import { STEP_SPEED, TURN_SPEED } from './speeds.js';
+export { STEP_SPEED, TURN_SPEED };
 const colorField = { type: 'field_colour_hsv_sliders', name: 'COLOR', colour: '#0062ff' };
 const options = (values) => values.map((v) => (Array.isArray(v) ? v : [v, v]));
 const moveDirections = [
@@ -46,7 +45,7 @@ const definitions = [
     ],
     ...statement,
     style: 'motion_blocks',
-    tooltip: `Drives at ${STEP_SPEED} m/s for distance ÷ speed seconds, then stops.`,
+    tooltip: `Drives at the movement speed (${STEP_SPEED} m/s unless a set speed block changes it) for distance ÷ speed seconds, then stops.`,
   },
   {
     type: 'robot_turn_angle',
@@ -57,7 +56,23 @@ const definitions = [
     ],
     ...statement,
     style: 'motion_blocks',
-    tooltip: `Turns at ${TURN_SPEED} rad/s for angle ÷ speed seconds, then stops.`,
+    tooltip: `Turns at the turn speed (${TURN_SPEED} rad/s unless a set speed block changes it) for angle ÷ speed seconds, then stops.`,
+  },
+  {
+    type: 'robot_set_speed',
+    message0: 'set movement speed %1 m/s',
+    args0: [speed('SPEED', STEP_SPEED, 0.01, 0.3)],
+    ...statement,
+    style: 'motion_blocks',
+    tooltip: `The speed of the blocks that move a distance. Every run starts at ${STEP_SPEED} m/s.`,
+  },
+  {
+    type: 'robot_set_turn_speed',
+    message0: 'set turn speed %1 rad/s',
+    args0: [speed('SPEED', TURN_SPEED, 0.05, 1)],
+    ...statement,
+    style: 'motion_blocks',
+    tooltip: `The speed of the blocks that turn an angle. Every run starts at ${TURN_SPEED} rad/s.`,
   },
   {
     type: 'robot_move',
@@ -287,6 +302,8 @@ const level1 = {
       block('robot_move_distance', { fields: { DIRECTION: 'back' } }),
       block('robot_turn_angle'),
       block('robot_turn_angle', { fields: { DIRECTION: 'right' } }),
+      block('robot_set_speed'),
+      block('robot_set_turn_speed'),
       block('robot_stop'),
     ]),
     category('Lights', 'light', [
@@ -313,6 +330,8 @@ const level2 = {
     category('Move', 'motion', [
       block('robot_move_distance'),
       block('robot_turn_angle'),
+      block('robot_set_speed'),
+      block('robot_set_turn_speed'),
       block('robot_move'),
       block('robot_turn'),
       { kind: 'sep', gap: 24 },

@@ -1,3 +1,5 @@
+import { STEP_SPEED, TURN_SPEED } from './speeds.js';
+
 export function delay(ms, signal) {
   return new Promise((resolve, reject) => {
     if (signal.aborted) return reject(new DOMException('Stopped', 'AbortError'));
@@ -63,6 +65,7 @@ export class Runner {
     this.controller = new AbortController();
     const signal = this.controller.signal;
     const variables = new Map();
+    const speeds = { linear: STEP_SPEED, angular: TURN_SPEED }; // changed by the set speed blocks
     let depth = 0;
     let lastPass = performance.now();
     const checkStop = () => {
@@ -233,6 +236,27 @@ export class Runner {
           case 'move':
           case 'turn':
             await timed(cmd);
+            break;
+          case 'moveDistance':
+            await timed({
+              op: 'move',
+              direction: cmd.direction,
+              speed: speeds.linear,
+              seconds: cmd.metres / speeds.linear,
+              label: `${cmd.metres} m`,
+            });
+            break;
+          case 'turnAngle':
+            await timed({
+              op: 'turn',
+              direction: cmd.direction,
+              speed: speeds.angular,
+              seconds: (cmd.degrees * Math.PI) / 180 / speeds.angular,
+              label: `${cmd.degrees}°`,
+            });
+            break;
+          case 'setSpeed':
+            speeds[cmd.kind] = cmd.value;
             break;
           case 'drive':
             this.robot.move(cmd.direction, cmd.speed);

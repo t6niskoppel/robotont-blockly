@@ -81,7 +81,7 @@ test('loose blocks are ignored, but two start blocks are refused', () => {
   );
 });
 
-test('distance and angle blocks become timed moves at fixed speeds', () => {
+test('distance and angle blocks compile to moves that the runtime times', () => {
   const [move, turn] = withWorkspace(
     start({
       type: 'robot_move_distance',
@@ -90,9 +90,54 @@ test('distance and angle blocks become timed moves at fixed speeds', () => {
     }),
     compile,
   ).main;
-  assert.equal(move.speed, STEP_SPEED);
-  assert.ok(Math.abs(move.seconds - 0.6 / STEP_SPEED) < 1e-9);
-  assert.ok(Math.abs(turn.seconds - Math.PI / 2 / turn.speed) < 1e-9);
+  assert.deepEqual(
+    [move.op, move.direction, move.metres, turn.op, turn.direction, turn.degrees],
+    ['moveDistance', 'front', 0.6, 'turnAngle', 'right', 90],
+  );
+});
+
+test('a run starts at the default speeds and the set speed blocks change them', async () => {
+  const program = withWorkspace(
+    start({
+      type: 'robot_move_distance',
+      fields: { DIRECTION: 'front', METRES: 0.015 },
+      next: {
+        block: {
+          type: 'robot_set_speed',
+          fields: { SPEED: 0.3 },
+          next: {
+            block: {
+              type: 'robot_move_distance',
+              fields: { DIRECTION: 'back', METRES: 0.03 },
+              next: {
+                block: {
+                  type: 'robot_set_turn_speed',
+                  fields: { SPEED: 1 },
+                  next: {
+                    block: { type: 'robot_turn_angle', fields: { DIRECTION: 'left', DEGREES: 5.73 } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    compile,
+  );
+  const robot = fakeRobot();
+  await new Runner(robot).run(program);
+  assert.deepEqual(
+    robot.calls.filter(([name]) => name !== 'stop'),
+    [
+      ['move', 'front', STEP_SPEED],
+      ['move', 'back', 0.3],
+      ['turn', 'left', 1],
+    ],
+  );
+  const second = fakeRobot();
+  await new Runner(second).run(program);
+  assert.equal(second.calls[0][2], STEP_SPEED, 'the next run starts at the default speed again');
 });
 
 test('break outside a loop is refused and points at the block', () => {

@@ -64,7 +64,8 @@ wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
 motion, velocity, distance and battery readings, RGB
 lights, loops with break, logic, maths, text, variables and functions.
 
-The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s, so the result
+The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s unless the
+**set movement speed** and **set turn speed** blocks change them, so the result
 depends on how the robot accelerates. Continuous motion keeps going until a stop
 block or the end of the program. Velocity is limited to 0.3 m/s and 1 rad/s.
 

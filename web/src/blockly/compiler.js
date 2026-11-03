@@ -1,5 +1,3 @@
-import { STEP_SPEED, TURN_SPEED } from './blocks.js';
-
 // Compile only the supported block vocabulary into data for the interpreter.
 // Blocks that are not attached to "when Run is pressed" or a function are ignored.
 export function compile(workspace) {
@@ -149,30 +147,28 @@ export function compile(workspace) {
             seconds: fieldNumber(b, 'SECONDS', 0.05, 30),
           });
           break;
-        case 'robot_move_distance': {
-          const metres = fieldNumber(b, 'METRES', 0.01, 5);
+        case 'robot_move_distance':
           out.push({
-            op: 'move',
+            op: 'moveDistance',
             id,
             direction: direction(),
-            speed: STEP_SPEED,
-            seconds: metres / STEP_SPEED,
-            label: `${metres} m`,
+            metres: fieldNumber(b, 'METRES', 0.01, 5),
           });
           break;
-        }
-        case 'robot_turn_angle': {
-          const degrees = fieldNumber(b, 'DEGREES', 1, 720);
+        case 'robot_turn_angle':
           out.push({
-            op: 'turn',
+            op: 'turnAngle',
             id,
             direction: direction(),
-            speed: TURN_SPEED,
-            seconds: (degrees * Math.PI) / 180 / TURN_SPEED,
-            label: `${degrees}°`,
+            degrees: fieldNumber(b, 'DEGREES', 1, 720),
           });
           break;
-        }
+        case 'robot_set_speed':
+          out.push({ op: 'setSpeed', id, kind: 'linear', value: fieldNumber(b, 'SPEED', 0.01, 0.3) });
+          break;
+        case 'robot_set_turn_speed':
+          out.push({ op: 'setSpeed', id, kind: 'angular', value: fieldNumber(b, 'SPEED', 0.05, 1) });
+          break;
         case 'robot_drive':
         case 'robot_spin':
           out.push({
