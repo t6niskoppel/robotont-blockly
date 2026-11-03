@@ -1,6 +1,9 @@
 // The blockly package entry brings in the standard blocks and English messages.
 import * as Blockly from 'blockly';
 import '@blockly/field-colour-hsv-sliders';
+import '@blockly/field-slider';
+import '@blockly/block-plus-minus';
+import '@blockly/toolbox-search';
 export const directions = ['front', 'back', 'left', 'right'];
 // Fixed speeds for the distance and angle blocks, which are timed: distance / speed.
 export const STEP_SPEED = 0.15; // m/s
@@ -13,6 +16,15 @@ const moveDirections = [
   ['left', 'left'],
   ['right', 'right'],
 ];
+// Speeds are picked with a slider; the other numbers are typed.
+const speed = (name, value, min, max) => ({
+  type: 'field_slider',
+  name,
+  value,
+  min,
+  max,
+  precision: 0.01,
+});
 const number = (name, value, min, max) => ({ type: 'field_number', name, value, min, max });
 const statement = { previousStatement: null, nextStatement: null };
 
@@ -52,7 +64,7 @@ const definitions = [
     message0: 'move %1 at %2 m/s for %3 seconds',
     args0: [
       { type: 'field_dropdown', name: 'DIRECTION', options: moveDirections },
-      number('SPEED', 0.15, 0.01, 0.3),
+      speed('SPEED', 0.15, 0.01, 0.3),
       number('SECONDS', 1, 0.05, 30),
     ],
     ...statement,
@@ -63,7 +75,7 @@ const definitions = [
     message0: 'turn %1 at %2 rad/s for %3 seconds',
     args0: [
       { type: 'field_dropdown', name: 'DIRECTION', options: options(['left', 'right']) },
-      number('SPEED', 0.5, 0.05, 1),
+      speed('SPEED', 0.5, 0.05, 1),
       number('SECONDS', 1, 0.05, 30),
     ],
     ...statement,
@@ -74,7 +86,7 @@ const definitions = [
     message0: 'start moving %1 at %2 m/s',
     args0: [
       { type: 'field_dropdown', name: 'DIRECTION', options: moveDirections },
-      number('SPEED', 0.1, 0.01, 0.3),
+      speed('SPEED', 0.1, 0.01, 0.3),
     ],
     ...statement,
     style: 'motion_blocks',
@@ -86,7 +98,7 @@ const definitions = [
     message0: 'start turning %1 at %2 rad/s',
     args0: [
       { type: 'field_dropdown', name: 'DIRECTION', options: options(['left', 'right']) },
-      number('SPEED', 0.5, 0.05, 1),
+      speed('SPEED', 0.5, 0.05, 1),
     ],
     ...statement,
     style: 'motion_blocks',
@@ -380,6 +392,8 @@ const level2 = {
     { kind: 'sep' },
     category('Variables', 'variable', [], { custom: 'VARIABLE' }),
     category('Functions', 'procedure', [], { custom: 'PROCEDURE' }),
+    { kind: 'sep' },
+    { kind: 'search', name: 'Search', contents: [] },
   ],
 };
 export const toolboxes = { 1: level1, 2: level2 };

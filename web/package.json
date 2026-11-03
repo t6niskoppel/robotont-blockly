@@ -19,7 +19,10 @@
     "vite": "8.3.5"
   },
   "dependencies": {
+    "@blockly/block-plus-minus": "13.4.0",
     "@blockly/field-colour-hsv-sliders": "13.4.0",
+    "@blockly/field-slider": "13.4.0",
+    "@blockly/toolbox-search": "13.4.0",
     "blockly": "13.4.0",
     "ros3d": "^1.1.0",
     "roslib": "^1.4.1",
