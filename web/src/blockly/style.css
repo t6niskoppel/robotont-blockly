@@ -108,7 +108,6 @@ button.link {
 
 /* Toolbar */
 .toolbar {
-  justify-content: flex-end;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
