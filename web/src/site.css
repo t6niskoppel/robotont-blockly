@@ -1,0 +1,93 @@
+/* Header shared by the Overview, Blockly and Status pages. */
+.site-header {
+  font:
+    14px Inter,
+    system-ui,
+    sans-serif;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 14px 4vw;
+  border-bottom: 1px solid #dce5df;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-icon {
+  display: grid;
+  place-items: center;
+  background: #0f6d5b;
+  color: white;
+  font-size: 23px;
+  font-weight: 700;
+  border-radius: 12px;
+  width: 45px;
+  height: 45px;
+}
+.site-header h1 {
+  font-size: 21px;
+  margin: 0;
+  font-weight: 650;
+}
+.site-header h1 span {
+  font-weight: 400;
+  color: #70857a;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+.tabs a {
+  padding: 9px 16px;
+  border-radius: 8px;
+  color: #4c6a5e;
+  font-weight: 600;
+  text-decoration: none;
+}
+.tabs a:hover {
+  background: #f0f5f2;
+}
+.tabs a[aria-current='page'] {
+  background: #e2f1ec;
+  color: #0f6d5b;
+}
+.connection {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-left: auto;
+  color: #71867c;
+}
+.connection select {
+  margin-left: 10px;
+  background: #f8faf9;
+  color: #214a3c;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #acb9b0;
+}
+.dot.connected {
+  background: #31a77d;
+  box-shadow: 0 0 0 4px #e4f5ed;
+}
+@media (max-width: 760px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    padding: 14px 16px;
+  }
+  .connection > span:not(.dot) {
+    display: none;
+  }
+}
+@media (max-width: 500px) {
+  .connection select {
+    max-width: 150px;
+  }
+}

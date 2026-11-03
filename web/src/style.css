@@ -49,65 +49,6 @@ button.danger {
   background: #b43b42;
   border-color: #b43b42;
 }
-header {
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 4vw;
-  border-bottom: 1px solid #dce5df;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.brand-icon {
-  display: grid;
-  place-items: center;
-  background: #0f6d5b;
-  color: white;
-  font-size: 23px;
-  font-weight: 700;
-  border-radius: 12px;
-  width: 45px;
-  height: 45px;
-}
-h1 {
-  font-size: 21px;
-  margin: 0;
-  font-weight: 650;
-}
-h1 span {
-  font-weight: 400;
-  color: #70857a;
-}
-.brand p {
-  margin: 3px 0 0;
-  color: #71867c;
-  font-size: 12px;
-}
-.connection {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  color: #71867c;
-}
-.connection select {
-  margin-left: 10px;
-  background: #f8faf9;
-  color: #214a3c;
-}
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #acb9b0;
-}
-.dot.connected {
-  background: #31a77d;
-  box-shadow: 0 0 0 4px #e4f5ed;
-}
 main {
   max-width: 1600px;
   margin: auto;
@@ -133,12 +74,6 @@ h2 {
 .overview p {
   margin: 0;
   color: #7b8d84;
-}
-.overview-actions {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  flex-wrap: wrap;
 }
 .metrics {
   display: grid;
@@ -284,17 +219,11 @@ dd {
 .drive-pad button:active:not(:disabled) {
   background: #cbe8d8;
 }
-.robot-mark {
-  align-self: center;
-  justify-self: center;
-  background: #176a55;
+.drive-pad button.danger {
   color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
+  background: #b43b42;
+  border-color: #b43b42;
+  font-size: 20px;
 }
 .slider-label {
   display: block;
@@ -375,29 +304,17 @@ footer {
   .overview {
     align-items: flex-start;
   }
-  .overview-actions {
-    justify-content: flex-end;
-  }
   .metrics strong {
     font-size: 21px;
   }
 }
 @media (max-width: 760px) {
-  header {
-    padding: 16px;
-  }
-  .connection > span:not(.dot) {
-    display: none;
-  }
   main {
     padding: 22px 16px;
   }
   .overview {
     flex-direction: column;
     gap: 15px;
-  }
-  .overview-actions {
-    justify-content: flex-start;
   }
   .dashboard {
     grid-template-columns: 1fr;
@@ -451,9 +368,6 @@ footer {
     grid-column: 1/-1;
     margin-top: 5px;
   }
-  .connection select {
-    max-width: 150px;
-  }
 }
 .scene {
   position: relative;
@@ -472,4 +386,28 @@ button.small {
   border: 1px solid #dce5df;
   border-radius: 8px;
   background: #000;
+}
+.status-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+.topics {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.topics th,
+.topics td {
+  text-align: left;
+  padding: 7px 4px;
+  border-bottom: 1px solid #edf2ee;
+}
+.topics th {
+  width: 120px;
+  color: #6a8075;
+  font-weight: 600;
+}
+.topics td {
+  font-family: ui-monospace, monospace;
 }

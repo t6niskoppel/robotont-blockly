@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0a655c" />
+    <title>Robotont Status</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="site-header">
+        <div class="brand">
+          <span class="brand-icon">R</span>
+          <h1>Robotont <span>web app</span></h1>
+        </div>
+        <nav class="tabs" aria-label="Pages">
+          <a href="/">Overview</a>
+          <a href="/blockly/">Blockly</a>
+          <a href="/status/" aria-current="page">Status</a>
+        </nav>
+        <div class="connection">
+          <span id="online" class="dot"></span><span id="connection">Connecting…</span>
+        </div>
+      </header>
+      <main>
+        <section class="overview">
+          <div>
+            <span class="eyebrow">WEB BRIDGE</span>
+            <h2 id="robot-title">No robot</h2>
+            <p id="robot-detail">Waiting for a robot on this ROS domain</p>
+          </div>
+        </section>
+        <div class="status-grid">
+          <section class="card">
+            <div class="card-title">
+              <h3>Topics</h3>
+              <span id="topics-count" class="tag">0</span>
+            </div>
+            <table id="topics" class="topics"></table>
+          </section>
+          <section class="card">
+            <div class="card-title">
+              <h3>Terminal</h3>
+              <button id="terminal-toggle" class="secondary small">Open terminal</button>
+            </div>
+            <iframe id="terminal" title="Terminal" hidden></iframe>
+          </section>
+        </div>
+        <footer>Anyone on this network can use the terminal. Use a private network.</footer>
+      </main>
+    </div>
+    <script type="module" src="/src/status.js"></script>
+  </body>
+</html>

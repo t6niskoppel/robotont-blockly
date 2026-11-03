@@ -1,3 +1,4 @@
+import '../site.css';
 import { Blockly, toolbox, example } from './blocks.js';
 import { compile } from './compiler.js';
 import { Runner } from './runtime.js';
@@ -40,7 +41,7 @@ const log = (message) => {
   while (element('log').children.length > 40) element('log').lastChild.remove();
 };
 const busy = (value) => {
-  for (const id of ['run', 'example', 'load', 'robot-choice']) element(id).disabled = value;
+  for (const id of ['run', 'example', 'load']) element(id).disabled = value;
 };
 const loadExample = () => {
   workspace.clear();
@@ -48,9 +49,6 @@ const loadExample = () => {
 };
 loadExample();
 element('example').onchange = loadExample;
-element('robot-choice').onchange = () => {
-  if (!runner) connection.select(element('robot-choice').value);
-};
 element('run').onclick = async () => {
   try {
     const program = compile(workspace);
@@ -128,20 +126,12 @@ document.addEventListener('visibilitychange', () => {
 
 function render() {
   const robot = connection.robot;
-  element('robot-choice').replaceChildren(
-    ...connection.robots.map((entry) => {
-      const option = document.createElement('option');
-      option.value = entry.ns;
-      option.textContent = entry.name + (entry.ns ? ` (${entry.ns})` : '');
-      option.selected = entry.ns === connection.selected;
-      return option;
-    }),
-  );
+  element('online').classList.toggle('connected', connection.connected && Boolean(robot));
   element('connection').textContent = !connection.connected
-    ? 'Not connected to rosbridge; motion stops by itself.'
+    ? 'Disconnected from rosbridge'
     : robot
-      ? `Connected to ${robot.name} · ${robot.generation === '3' ? 'Gen 3' : robot.generation === '3lite' ? 'Gen 3 Lite' : 'Robotont'}${robot.ns ? ' · ' + robot.ns : ''}`
-      : 'No robot found on this ROS domain';
+      ? `Connected to ${robot.name}`
+      : 'No robot found';
   element('run').disabled = !connection.ready || Boolean(runner);
   element('scan-toggle').textContent = previews.scan ? 'Hide lidar' : 'Show lidar';
   element('camera-toggle').textContent = previews.rgb ? 'Hide camera' : 'Show camera';

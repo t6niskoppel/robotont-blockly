@@ -1,10 +1,9 @@
 import './style.css';
+import './site.css';
 import { RobotConnection } from './ros_connection.js';
 import { RobotControl } from './robot_control.js';
 import { RobotViewer } from './viewer.js';
 import { previews, savePreviews } from './previews.js';
-
-const TERMINAL_PORT = Number(new URLSearchParams(location.search).get('terminal')) || 7681;
 
 const element = (id) => document.getElementById(id);
 const connection = new RobotConnection();
@@ -90,6 +89,7 @@ function setImages() {
       else image.removeAttribute('src');
     }
     image.hidden = !source;
+    image.closest('article').hidden = !name;
     const placeholder = element(kind + '-placeholder'),
       off = Boolean(name) && !previews[kind];
     placeholder.dataset.text ??= placeholder.textContent;
@@ -99,6 +99,7 @@ function setImages() {
     element(kind + '-toggle').textContent = previews[kind] ? 'Hide' : 'Show';
     element(kind + '-toggle').hidden = !name;
   }
+  element('rgb').closest('.camera-grid').hidden = !robot?.topics.rgb && !robot?.topics.depth;
   renderImageStatus();
 }
 
@@ -232,16 +233,6 @@ element('off-led').onclick = () =>
     control.led(element('led-side').value, '#000000');
     log('Lights off sent');
   });
-
-// --- Terminal (ttyd, started by web.launch.py) --------------------------------------------------
-element('terminal-toggle').onclick = () => {
-  const frame = element('terminal'),
-    open = frame.hidden;
-  frame.hidden = !open;
-  if (open) frame.src = `http://${location.hostname}:${TERMINAL_PORT}/`;
-  else frame.removeAttribute('src');
-  element('terminal-toggle').textContent = open ? 'Close terminal' : 'Open terminal';
-};
 
 // --- Telemetry ----------------------------------------------------------------------------------
 function renderControls() {

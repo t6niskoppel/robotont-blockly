@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         index: resolve(import.meta.dirname, 'index.html'),
         blockly: resolve(import.meta.dirname, 'blockly/index.html'),
+        status: resolve(import.meta.dirname, 'status/index.html'),
         viewer: resolve(import.meta.dirname, 'viewer.html'),
       },
     },

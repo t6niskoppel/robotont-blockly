@@ -8,17 +8,19 @@
   </head>
   <body>
     <div id="app">
-      <header>
+      <header class="site-header">
         <div class="brand">
           <span class="brand-icon">R</span>
-          <div>
-            <h1>Robotont <span>web app</span></h1>
-          </div>
+          <h1>Robotont <span>web app</span></h1>
         </div>
-        <a href="/blockly/">Blockly</a>
+        <nav class="tabs" aria-label="Pages">
+          <a href="/" aria-current="page">Overview</a>
+          <a href="/blockly/">Blockly</a>
+          <a href="/status/">Status</a>
+        </nav>
         <div class="connection">
-          <span id="online" class="dot"></span><span id="connection">Connecting…</span
-          ><select id="robot" aria-label="Choose robot"></select>
+          <span id="online" class="dot"></span><span id="connection">Connecting…</span><select id="robot" aria-label="Choose robot"></select
+        >
         </div>
       </header>
       <main>
@@ -27,9 +29,6 @@
             <span class="eyebrow">CONNECTED ROBOT</span>
             <h2 id="robot-title">No robot</h2>
             <p id="robot-detail">Waiting for the robot connection</p>
-          </div>
-          <div class="overview-actions">
-            <button id="stop" class="danger">■ Stop robot</button>
           </div>
         </section>
         <section class="metrics" aria-label="Live telemetry">
@@ -87,13 +86,6 @@
               <div id="scene" class="scene"></div>
               <dl id="distances" class="distances"></dl>
             </section>
-            <section class="card">
-              <div class="card-title">
-                <h3>Terminal</h3>
-                <button id="terminal-toggle" class="secondary small">Open terminal</button>
-              </div>
-              <iframe id="terminal" title="Terminal" hidden></iframe>
-            </section>
           </div>
           <aside>
             <section class="card">
@@ -107,7 +99,7 @@
                 ><button data-drive="front" aria-label="Move forward">↑</button
                 ><button data-drive="turn-right" aria-label="Turn right">↷</button>
                 <button data-drive="left" aria-label="Move left">←</button
-                ><span class="robot-mark"> </span
+                ><button id="stop" class="danger" aria-label="Stop robot">■</button
                 ><button data-drive="right" aria-label="Move right">→</button><span></span
                 ><button data-drive="back" aria-label="Move backward">↓</button>
               </div>
@@ -119,7 +111,7 @@
                 >Turn speed <output id="turn-value">0.5 rad/s</output
                 ><input id="turn-speed" type="range" min="0.1" max="1" step="0.1" value="0.5"
               /></label>
-              <p class="hint keyboard">W A S D / arrows · Q E turn · Space stops</p>
+              <p class="hint keyboard">W A S D / arrows · Q E turn · Space or ■ stops</p>
             </section>
             <section class="card">
               <div class="card-title">
