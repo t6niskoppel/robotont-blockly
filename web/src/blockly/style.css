@@ -108,6 +108,7 @@ button.link {
 
 /* Toolbar */
 .toolbar {
+  justify-content: flex-end;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -116,11 +117,8 @@ button.link {
   background: #fbfcfc;
   border-bottom: 1px solid var(--line);
 }
-.toolbar .spacer {
-  flex: 1;
-}
 .segmented {
-  display: inline-flex;
+  display: flex;
   padding: 3px;
   border-radius: 10px;
   background: #e6eeea;
@@ -406,4 +404,17 @@ h2 {
   .toolbar button.secondary {
     padding: 8px 10px;
   }
+}
+
+/* The block set switch at the top of the block list */
+.blocklyToolbox {
+  min-width: 200px;
+}
+#levels {
+  margin: 8px;
+  flex: none;
+}
+#levels button {
+  flex: 1;
+  padding: 4px 8px;
 }

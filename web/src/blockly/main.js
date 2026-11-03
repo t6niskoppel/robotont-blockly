@@ -44,6 +44,8 @@ const workspace = Blockly.inject('workspace', {
   zoom: { controls: true, wheel: true, startScale: 0.9, pinch: true },
   move: { scrollbars: true, drag: true, wheel: true },
 });
+// The Basic / All blocks switch sits at the top of the block list.
+workspace.getToolbox().HtmlDiv.prepend(element('levels'));
 // Recycled blocks stay behind when the list is rebuilt, so every visit builds them fresh.
 workspace.getFlyout().setRecyclingEnabled(false);
 new ResizeObserver(() => Blockly.svgResize(workspace)).observe(element('workspace'));
