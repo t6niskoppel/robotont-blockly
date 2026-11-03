@@ -2,23 +2,19 @@ import './style.css';
 import './site.css';
 import ROSLIB from 'roslib';
 import { RobotConnection } from './ros_connection.js';
+import { bindHeader } from './header.js';
 
 const TERMINAL_PORT = Number(new URLSearchParams(location.search).get('terminal')) || 7681;
 const element = (id) => document.getElementById(id);
 const connection = new RobotConnection();
+bindHeader(connection);
 
 // --- Robot summary --------------------------------------------------------------------------------
 function renderRobot() {
   const robot = connection.robot;
-  element('online').classList.toggle('connected', connection.connected && Boolean(robot));
-  element('connection').textContent = !connection.connected
-    ? 'Disconnected from rosbridge'
-    : robot
-      ? `Connected to ${robot.name}`
-      : 'No robot found';
   element('robot-title').textContent = robot?.name || 'No robot';
   const generations = { 3: 'Gen 3', '3lite': 'Gen 3 Lite' };
-  element('robot-detail').textContent = robot
+  element('bridge-detail').textContent = robot
     ? (generations[robot.generation] || 'Robotont') +
       (robot.ns ? ` \u00b7 namespace ${robot.ns}` : '') +
       (robot.led ? ' \u00b7 LED module' : '')

@@ -1,12 +1,14 @@
 import './style.css';
 import './site.css';
 import { RobotConnection } from './ros_connection.js';
+import { bindHeader } from './header.js';
 import { RobotControl } from './robot_control.js';
 import { RobotViewer } from './viewer.js';
 import { previews, savePreviews } from './previews.js';
 
 const element = (id) => document.getElementById(id);
 const connection = new RobotConnection();
+bindHeader(connection);
 const control = new RobotControl(connection);
 const viewer = new RobotViewer(element('scene'), connection);
 const keys = new Map(); // key code -> direction, for the keys held down
@@ -43,18 +45,6 @@ function renderRobots() {
   );
   select.hidden = connection.robots.length < 2;
   const robot = connection.robot;
-  element('online').classList.toggle('connected', connection.connected && Boolean(robot));
-  if (!connection.connected) {
-    element('connection').textContent = 'Disconnected from rosbridge';
-  } else if (robot) {
-    element('connection').textContent = `Connected to ${robot.name}`;
-  } else {
-    element('connection').textContent = 'No robot found';
-  }
-  const generations = { 3: 'Gen 3', '3lite': 'Gen 3 Lite' };
-  element('robot-detail').textContent = robot
-    ? (generations[robot.generation] || 'Robotont') + (robot.ns ? ` · ${robot.ns}` : '')
-    : '';
   element('points-label').hidden = !robot?.topics.points;
   setImages();
   renderControls();
@@ -293,28 +283,7 @@ function renderImageStatus() {
 function renderTelemetry() {
   renderImageStatus();
   const odometryEntry = connection.telemetry.odom;
-  const batteryEntry = connection.telemetry.battery;
   const odometry = fresh(odometryEntry) ? odometryEntry.data : null;
-  const battery = fresh(batteryEntry) ? batteryEntry.data : null;
-
-  element('battery').textContent = '—';
-  if (!battery) {
-    element('battery-detail').textContent = 'No fresh battery data';
-  } else if (battery.invalid) {
-    element('battery-detail').textContent =
-      `No valid reading from the robot (it reports ${formatNumber(battery.rawVoltage, 1)} V)`;
-  } else if (!battery.present) {
-    element('battery-detail').textContent = 'Battery not present';
-  } else {
-    element('battery').textContent =
-      battery.percentage === null
-        ? `${formatNumber(battery.voltage, 1)} V`
-        : `${Math.round(battery.percentage * 100)}%`;
-    let detail = `${formatNumber(battery.voltage, 1)} V`;
-    if (battery.temperature !== null) detail += ` · ${formatNumber(battery.temperature, 1)} °C`;
-    element('battery-detail').textContent = detail;
-  }
-  element('battery-detail').title = element('battery-detail').textContent;
 
   element('speed').textContent = odometry
     ? `${formatNumber(Math.hypot(odometry.vx, odometry.vy))} m/s`

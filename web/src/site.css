@@ -56,6 +56,31 @@
   background: #31a77d;
   box-shadow: 0 0 0 4px #e4f5ed;
 }
+.battery {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 14px;
+  line-height: 1.2;
+}
+.battery #battery {
+  font-weight: 650;
+  color: #183e35;
+}
+.battery small,
+#robot-detail {
+  font-size: 11px;
+  color: #7b8d84;
+}
+.battery small {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.battery #battery[data-state='low'] {
+  color: #c2333b;
+}
 @media (max-width: 760px) {
   .site-header {
     flex-wrap: wrap;

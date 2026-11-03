@@ -429,28 +429,6 @@ button.small {
   box-shadow: 0 0 0 1px #cbd9d2;
 }
 
-.battery {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: 14px;
-  line-height: 1.2;
-}
-.battery #battery {
-  font-weight: 650;
-  color: #183e35;
-}
-.battery small,
-#robot-detail {
-  font-size: 11px;
-  color: #7b8d84;
-}
-.battery small {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .speed-readout {
   display: flex;
   align-items: baseline;

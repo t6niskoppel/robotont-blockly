@@ -18,6 +18,10 @@
         </nav>
         <div class="connection">
           <span id="online" class="dot"></span><span id="connection">Connecting…</span>
+          <small id="robot-detail"></small>
+          <div class="battery" title="Battery">
+            <span id="battery">—</span><small id="battery-detail">No battery data</small>
+          </div>
         </div>
       </header>
       <nav class="toolbar" aria-label="Program tools">
@@ -56,7 +60,6 @@
           <article class="card">
             <div class="card-title">
               <h2>Robot</h2>
-              <span id="battery" class="tag">Battery —</span>
             </div>
             <svg id="status" viewBox="-145 -122 290 244" role="img" aria-labelledby="status-title">
               <title id="status-title">Lights and obstacle distances around the robot</title>

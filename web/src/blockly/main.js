@@ -5,6 +5,7 @@ import { compile } from './compiler.js';
 import { Runner } from './runtime.js';
 import { StatusView } from './status_view.js';
 import { RobotConnection } from '../ros_connection.js';
+import { bindHeader } from '../header.js';
 import { RobotControl } from '../robot_control.js';
 import { RobotViewer } from '../viewer.js';
 
@@ -53,6 +54,7 @@ new ResizeObserver(() => Blockly.svgResize(workspace)).observe(element('workspac
 workspace.addChangeListener(Blockly.Events.disableOrphans);
 
 const connection = new RobotConnection();
+bindHeader(connection);
 const control = new RobotControl(connection);
 const viewer = new RobotViewer(element('scene'), connection);
 const status = new StatusView(element('status'));
@@ -268,12 +270,6 @@ document.addEventListener('visibilitychange', () => {
 
 function render() {
   const robot = connection.robot;
-  element('online').classList.toggle('connected', connection.connected && Boolean(robot));
-  element('connection').textContent = !connection.connected
-    ? 'Disconnected from rosbridge'
-    : robot
-      ? `Connected to ${robot.name}`
-      : 'No robot found';
   element('run').disabled = !connection.ready || Boolean(runner);
   element('led-note').textContent =
     robot && !robot.led
@@ -296,17 +292,6 @@ function render() {
   element('camera-note').hidden = Boolean(source) && Boolean(element('camera').naturalWidth);
   element('camera-note').textContent = source ? 'Waiting for camera frames…' : 'No camera';
 }
-function showBattery() {
-  const battery = connection.telemetry.battery?.data;
-  element('battery').textContent =
-    battery?.percentage != null
-      ? `Battery ${Math.round(battery.percentage * 100)}%`
-      : battery?.voltage != null
-        ? `Battery ${battery.voltage.toFixed(1)} V`
-        : 'Battery —';
-  element('battery').dataset.state =
-    battery?.percentage != null && battery.percentage < 0.2 ? 'low' : '';
-}
 setInterval(() => {
   const image = element('camera');
   if (image.dataset.source) {
@@ -318,8 +303,6 @@ for (const name of ['connection', 'robots', 'select']) connection.addEventListen
 connection.addEventListener('distances', () =>
   status.distances(connection.distances[connection.selected]),
 );
-connection.addEventListener('telemetry', showBattery);
 connection.addEventListener('select', () => status.clearLeds());
 render();
-showBattery();
 status.distances();
