@@ -56,6 +56,8 @@ const connection = new RobotConnection();
 const control = new RobotControl(connection);
 const viewer = new RobotViewer(element('scene'), connection);
 const status = new StatusView(element('status'));
+element('camera-card').ontoggle = () => render();
+element('view-card').ontoggle = () => viewer.setScan(element('view-card').open);
 element('follow').onclick = () => viewer.follow();
 element('top').onclick = () => viewer.topDown();
 let runner = null;
@@ -264,7 +266,8 @@ function render() {
     robot && !robot.led
       ? 'No LED module on this robot: the ring shows the colours the program sent.'
       : 'The ring shows the colours the program sent.';
-  const source = robot?.topics.rgb
+  // A collapsed camera card stops the stream, which saves the robot's Wi-Fi.
+  const source = robot?.topics.rgb && element('camera-card').open
     ? connection.videoUrl(robot.topics.rgb, {
         width: 320,
         height: 180,
