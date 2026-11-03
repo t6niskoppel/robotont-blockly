@@ -204,6 +204,24 @@ export function compile(workspace) {
             color: b.getFieldValue('COLOR'),
           });
           break;
+        case 'robot_led_pixel':
+          out.push({
+            op: 'ledPixels',
+            id,
+            from: input(b, 'PIXEL'),
+            to: input(b, 'PIXEL'),
+            color: b.getFieldValue('COLOR'),
+          });
+          break;
+        case 'robot_led_range':
+          out.push({
+            op: 'ledPixels',
+            id,
+            from: input(b, 'FROM'),
+            to: input(b, 'TO'),
+            color: b.getFieldValue('COLOR'),
+          });
+          break;
         case 'robot_led_rgb':
           out.push({
             op: 'ledRgb',

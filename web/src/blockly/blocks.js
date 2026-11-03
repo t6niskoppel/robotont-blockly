@@ -176,6 +176,28 @@ const definitions = [
     style: 'light_blocks',
   },
   {
+    type: 'robot_led_pixel',
+    message0: 'light pixel %1 %2',
+    args0: [{ type: 'input_value', name: 'PIXEL', check: 'Number' }, colorField],
+    inputsInline: true,
+    ...statement,
+    style: 'light_blocks',
+    tooltip: 'One light on the ring, numbered 0 to 59. Pixel 0 is at the front.',
+  },
+  {
+    type: 'robot_led_range',
+    message0: 'light pixels %1 to %2 %3',
+    args0: [
+      { type: 'input_value', name: 'FROM', check: 'Number' },
+      { type: 'input_value', name: 'TO', check: 'Number' },
+      colorField,
+    ],
+    inputsInline: true,
+    ...statement,
+    style: 'light_blocks',
+    tooltip: 'The lights from the first to the second pixel, numbered 0 to 59. Pixel 0 is at the front.',
+  },
+  {
     type: 'robot_led_rgb',
     message0: 'light %1 red %2 green %3 blue %4',
     args0: [
@@ -347,6 +369,8 @@ const level2 = {
     ]),
     category('Lights', 'light', [
       block('robot_led', { fields: { SIDE: 'all', COLOR: '#3b82f6' } }),
+      block('robot_led_pixel', { fields: { COLOR: '#ef4444' }, inputs: { PIXEL: num(0) } }),
+      block('robot_led_range', { fields: { COLOR: '#22c55e' }, inputs: { FROM: num(0), TO: num(9) } }),
       block('robot_led_rgb', { inputs: { R: num(255), G: num(120), B: num(0) } }),
     ]),
     category('Control', 'control', [

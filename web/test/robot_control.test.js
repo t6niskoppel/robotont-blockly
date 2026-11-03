@@ -126,11 +126,18 @@ test('commands publish through the installed roslib Topic implementation', (cont
   const control = new RobotControl(connection);
   control.move('front', 0.1);
   control.led('front', '#ff0000');
+  control.ledRange(3, 7, '#00ff00');
   control.stop();
   const publications = sent.filter((message) => message.op === 'publish');
   assert.deepEqual(
     publications.map((message) => message.topic),
-    ['web/command', 'web/led', 'web/stop'],
+    ['web/command', 'web/led', 'web/led', 'web/stop'],
   );
   assert.deepEqual(JSON.parse(publications[0].msg.data), { robot: 'rt5', vx: 0.1, vy: 0, wz: 0 });
+  assert.deepEqual(JSON.parse(publications[2].msg.data), {
+    robot: 'rt5',
+    first: 3,
+    last: 7,
+    color: '#00ff00',
+  });
 });

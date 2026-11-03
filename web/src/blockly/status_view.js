@@ -50,6 +50,10 @@ export class StatusView {
       if (side === 'all' || pixel.side === side)
         pixel.node.style.fill = color === '#000000' ? '' : color;
   }
+  ledRange(first, last, color) {
+    for (let i = first; i <= last; i++)
+      this.pixels[i].node.style.fill = color === '#000000' ? '' : color;
+  }
   clearLeds() {
     this.led('all', '#000000');
   }

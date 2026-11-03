@@ -76,6 +76,13 @@ export class RobotControl {
     });
   }
 
+  ledRange(first, last, color) {
+    this.requireRobot();
+    this.ledTopic.publish({
+      data: JSON.stringify({ robot: this.connection.selected, first, last, color }),
+    });
+  }
+
   distance(direction) {
     return this.connection.distance(direction);
   }

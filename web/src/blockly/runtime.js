@@ -1,5 +1,7 @@
 import { STEP_SPEED, TURN_SPEED } from './speeds.js';
 
+const LED_PIXELS = 60; // the ring of lights on the robot
+
 export function delay(ms, signal) {
   return new Promise((resolve, reject) => {
     if (signal.aborted) return reject(new DOMException('Stopped', 'AbortError'));
@@ -288,6 +290,15 @@ export class Runner {
           case 'led':
             await this.robot.led(cmd.side, cmd.color);
             break;
+          case 'ledPixels': {
+            const first = await number(cmd.from, 'Light pixel'),
+              last = await number(cmd.to, 'Light pixel');
+            const [low, high] = first <= last ? [first, last] : [last, first];
+            if (!Number.isInteger(low) || !Number.isInteger(high) || low < 0 || high >= LED_PIXELS)
+              throw new Error(`Light pixels are whole numbers from 0 to ${LED_PIXELS - 1}.`);
+            await this.robot.ledPixels(low, high, cmd.color);
+            break;
+          }
           case 'ledRgb':
             await this.robot.led(
               cmd.side,

@@ -36,6 +36,7 @@ const fakeRobot = () => {
     drive: (v) => calls.push(['drive', v]),
     stop: () => calls.push(['stop']),
     led: (side, color) => calls.push(['led', side, color]),
+    ledPixels: (first, last, color) => calls.push(['ledPixels', first, last, color]),
     distance: () => 1,
     battery: () => 80,
   };
@@ -294,4 +295,38 @@ test('wait until rechecks the condition and repeat forever runs until Stop', asy
   setTimeout(() => runner.stop(), 150);
   assert.equal(await result, 'stopped');
   assert.equal(readings.length, 0);
+});
+
+const pixelProgram = (from, to) =>
+  withWorkspace(
+    start({
+      type: 'robot_led_pixel',
+      fields: { COLOR: '#ff0000' },
+      inputs: { PIXEL: num(from) },
+      next: {
+        block: {
+          type: 'robot_led_range',
+          fields: { COLOR: '#00ff00' },
+          inputs: { FROM: num(from + 1), TO: num(to) },
+        },
+      },
+    }),
+    compile,
+  );
+
+test('light pixel and light pixels blocks set the ring pixels', async () => {
+  const robot = fakeRobot();
+  await new Runner(robot).run(pixelProgram(3, 9));
+  assert.deepEqual(robot.calls.filter(([name]) => name !== 'stop'), [
+    ['ledPixels', 3, 3, '#ff0000'],
+    ['ledPixels', 4, 9, '#00ff00'],
+  ]);
+});
+
+test('light pixels accept the ends in either order and refuse pixels off the ring', async () => {
+  const robot = fakeRobot();
+  await new Runner(robot).run(pixelProgram(9, 4));
+  assert.deepEqual(robot.calls[1], ['ledPixels', 4, 10, '#00ff00']);
+  await assert.rejects(new Runner(fakeRobot()).run(pixelProgram(0, 60)), /0 to 59/);
+  await assert.rejects(new Runner(fakeRobot()).run(pixelProgram(-1, 5)), /0 to 59/);
 });

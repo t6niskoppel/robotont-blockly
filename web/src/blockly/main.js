@@ -171,6 +171,13 @@ element('file').onchange = async (event) => {
 
 // The interpreter drives the robot through this; lights are also drawn in the status view.
 let warnedLeds = false;
+const warnNoLeds = () => {
+  if (connection.robot?.led || warnedLeds) return;
+  warnedLeds = true;
+  log(
+    'This robot has no LED module listening (the simulation has none). Colours are only shown here.',
+  );
+};
 const robot = {
   move: (direction, speed) => control.move(direction, speed),
   turn: (direction, speed) => control.turn(direction, speed),
@@ -181,12 +188,12 @@ const robot = {
   led(side, color) {
     control.led(side, color);
     status.led(side, color);
-    if (!connection.robot?.led && !warnedLeds) {
-      warnedLeds = true;
-      log(
-        'This robot has no LED module listening (the simulation has none). Colours are only shown here.',
-      );
-    }
+    warnNoLeds();
+  },
+  ledPixels(first, last, color) {
+    control.ledRange(first, last, color);
+    status.ledRange(first, last, color);
+    warnNoLeds();
   },
 };
 

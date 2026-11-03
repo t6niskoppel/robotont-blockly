@@ -62,7 +62,7 @@ and **Open** exchange it as a JSON file.
 **Basic** shows a small block set: move a distance, turn an angle, lights,
 wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
 motion, velocity, distance and battery readings, RGB
-lights, loops with break, logic, maths, text, variables and functions.
+lights, single pixels and ranges of pixels (numbered 0 to 59, pixel 0 at the front), loops with break, logic, maths, text, variables and functions.
 
 The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s unless the
 **set movement speed** and **set turn speed** blocks change them, so the result
