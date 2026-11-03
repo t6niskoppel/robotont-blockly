@@ -97,7 +97,6 @@ element('file').onchange = async (event) => {
     try {
       workspace.clear();
       Blockly.serialization.workspaces.load(data, workspace);
-      compile(workspace);
     } catch (error) {
       workspace.clear();
       Blockly.serialization.workspaces.load(previous, workspace);

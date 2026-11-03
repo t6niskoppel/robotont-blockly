@@ -10,10 +10,7 @@
   <body>
     <div id="app">
       <header class="site-header">
-        <div class="brand">
-          <span class="brand-icon">R</span>
-          <h1>Robotont <span>web app</span></h1>
-        </div>
+        <h1>Robotont web app</h1>
         <nav class="tabs" aria-label="Pages">
           <a href="/">Overview</a>
           <a href="/blockly/" aria-current="page">Blockly</a>
@@ -24,9 +21,6 @@
         </div>
       </header>
       <nav class="toolbar" aria-label="Program settings">
-        <div class="actions">
-          <button id="run">▶ Run</button><button id="stop" class="stop">■ Stop</button>
-        </div>
         <label
           >Example
           <select id="example">
@@ -40,7 +34,12 @@
         <input id="file" type="file" accept=".json,application/json" hidden />
       </nav>
       <main>
-        <div id="workspace" aria-label="Blockly program editor"></div>
+        <div class="editor">
+          <div id="workspace" aria-label="Blockly program editor"></div>
+          <div class="run-controls">
+            <button id="run">▶ Run</button><button id="stop" class="stop">■ Stop</button>
+          </div>
+        </div>
         <aside>
           <h2>Robot view</h2>
           <div class="view-controls">
