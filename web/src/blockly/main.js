@@ -38,6 +38,7 @@ const workspace = Blockly.inject('workspace', {
   theme,
   renderer: 'zelos',
   trashcan: true,
+  sounds: false,
   media: '/vendor/media/',
   grid: { spacing: 24, length: 2, colour: '#d5e2dc', snap: true },
   zoom: { controls: true, wheel: true, startScale: 0.9, pinch: true },
