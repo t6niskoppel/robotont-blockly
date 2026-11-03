@@ -113,7 +113,7 @@ aside {
 @media (min-width: 1300px) {
   .sensors {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
   .camera-grid[hidden] ~ .card {
