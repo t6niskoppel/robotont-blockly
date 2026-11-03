@@ -51,14 +51,10 @@ function renderRobots() {
   } else {
     element('connection').textContent = 'No robot found';
   }
-  element('robot-title').textContent = robot?.name || 'No robot';
   const generations = { 3: 'Gen 3', '3lite': 'Gen 3 Lite' };
-  let detail = 'Waiting for a robot on this ROS domain';
-  if (robot) {
-    detail = generations[robot.generation] || 'Robotont';
-    if (robot.ns) detail += ` · namespace ${robot.ns}`;
-  }
-  element('robot-detail').textContent = detail;
+  element('robot-detail').textContent = robot
+    ? (generations[robot.generation] || 'Robotont') + (robot.ns ? ` · ${robot.ns}` : '')
+    : '';
   element('points-label').hidden = !robot?.topics.points;
   setImages();
   renderControls();
@@ -318,6 +314,7 @@ function renderTelemetry() {
     if (battery.temperature !== null) detail += ` · ${formatNumber(battery.temperature, 1)} °C`;
     element('battery-detail').textContent = detail;
   }
+  element('battery-detail').title = element('battery-detail').textContent;
 
   element('speed').textContent = odometry
     ? `${formatNumber(Math.hypot(odometry.vx, odometry.vy))} m/s`

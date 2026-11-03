@@ -16,28 +16,15 @@
           <a href="/status/">Status</a>
         </nav>
         <div class="connection">
-          <span id="online" class="dot"></span><span id="connection">Connecting…</span><select id="robot" aria-label="Choose robot"></select
-        >
+          <div class="battery" title="Battery">
+            <span id="battery">—</span><small id="battery-detail">No battery data</small>
+          </div>
+          <span id="online" class="dot"></span><span id="connection">Connecting…</span>
+          <small id="robot-detail"></small>
+          <select id="robot" aria-label="Choose robot"></select>
         </div>
       </header>
       <main>
-        <section class="overview">
-          <div>
-            <span class="eyebrow">CONNECTED ROBOT</span>
-            <h2 id="robot-title">No robot</h2>
-            <p id="robot-detail">Waiting for the robot connection</p>
-          </div>
-          <section class="metrics" aria-label="Live telemetry">
-            <article>
-              <span>Battery</span><strong id="battery">—</strong
-              ><small id="battery-detail">No battery data</small>
-            </article>
-            <article>
-              <span>Speed</span><strong id="speed">—</strong
-              ><small id="rotation">No motion data</small>
-            </article>
-          </section>
-        </section>
         <div class="dashboard">
           <div class="sensors">
             <section class="camera-grid">
@@ -91,6 +78,9 @@
                 <span id="drive-status" class="tag">Ready</span>
               </div>
               <p class="hint">Hold a button to move. Release to stop.</p>
+              <div class="speed-readout">
+                <span>Speed</span><strong id="speed">—</strong><small id="rotation">No motion data</small>
+              </div>
               <div class="drive-pad">
                 <button data-drive="turn-left" aria-label="Turn left">↶<kbd>J</kbd></button
                 ><button data-drive="front" aria-label="Move forward">↑<kbd>I</kbd></button

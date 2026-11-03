@@ -73,32 +73,6 @@ h2 {
   margin: 0;
   color: #7b8d84;
 }
-.metrics {
-  display: flex;
-  gap: 14px;
-}
-.metrics article {
-  background: #fff;
-  border: 1px solid #dce5df;
-  border-radius: 12px;
-  padding: 14px 22px;
-  min-width: 190px;
-}
-.metrics span,
-.metrics small {
-  display: block;
-  color: #7b8d84;
-}
-.metrics strong {
-  display: block;
-  font-size: 24px;
-  font-weight: 550;
-  letter-spacing: -0.5px;
-  margin: 6px 0 4px;
-}
-.metrics small {
-  font-size: 12px;
-}
 .dashboard {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 330px;
@@ -328,9 +302,6 @@ footer {
   .overview {
     align-items: flex-start;
   }
-  .metrics strong {
-    font-size: 21px;
-  }
 }
 @media (max-width: 760px) {
   main {
@@ -345,21 +316,6 @@ footer {
   }
   .camera-grid {
     grid-template-columns: 1fr 1fr;
-  }
-  .metrics {
-    gap: 8px;
-    width: 100%;
-  }
-  .metrics article {
-    padding: 12px;
-    min-width: 0;
-    flex: 1;
-  }
-  .metrics strong {
-    font-size: 17px;
-  }
-  .metrics small {
-    font-size: 10px;
   }
   .distances {
     grid-template-columns: repeat(2, 1fr);
@@ -379,21 +335,6 @@ footer {
   .camera-grid,
   aside {
     grid-template-columns: 1fr;
-  }
-  .metrics {
-    flex-direction: column;
-  }
-  .metrics article {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-  }
-  .metrics strong {
-    margin: 0;
-  }
-  .metrics small {
-    grid-column: 1/-1;
-    margin-top: 5px;
   }
 }
 .scene {
@@ -486,4 +427,47 @@ button.small {
   border-radius: 8px;
   border: 2px solid #fff;
   box-shadow: 0 0 0 1px #cbd9d2;
+}
+
+.battery {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 14px;
+  line-height: 1.2;
+}
+.battery #battery {
+  font-weight: 650;
+  color: #183e35;
+}
+.battery small,
+#robot-detail {
+  font-size: 11px;
+  color: #7b8d84;
+}
+.battery small {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.speed-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 9px 12px;
+  background: #f4f8f5;
+  border-radius: 8px;
+}
+.speed-readout span,
+.speed-readout small {
+  font-size: 12px;
+  color: #7b8d84;
+}
+.speed-readout strong {
+  font-size: 16px;
+}
+.speed-readout small {
+  margin-left: auto;
 }
