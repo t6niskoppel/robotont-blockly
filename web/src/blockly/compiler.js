@@ -50,12 +50,8 @@ export function compile(workspace) {
           a: { op: 'distance', direction: b.getFieldValue('DIRECTION') },
           b: { op: 'number', value: fieldNumber(b, 'METRES', 0.05, 10) },
         };
-      case 'robot_pose':
-        return { op: 'pose', part: b.getFieldValue('PART') };
       case 'robot_battery':
         return { op: 'battery' };
-      case 'robot_timer':
-        return { op: 'timer' };
       case 'logic_compare':
         return {
           op: 'compare',

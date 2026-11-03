@@ -144,32 +144,8 @@ const definitions = [
     style: 'sensor_blocks',
   },
   {
-    type: 'robot_pose',
-    message0: 'robot %1',
-    args0: [
-      {
-        type: 'field_dropdown',
-        name: 'PART',
-        options: [
-          ['x (m)', 'x'],
-          ['y (m)', 'y'],
-          ['heading (°)', 'heading'],
-        ],
-      },
-    ],
-    output: 'Number',
-    style: 'sensor_blocks',
-    tooltip: 'Position from odometry, measured from where the robot was started.',
-  },
-  {
     type: 'robot_battery',
     message0: 'battery %',
-    output: 'Number',
-    style: 'sensor_blocks',
-  },
-  {
-    type: 'robot_timer',
-    message0: 'seconds since Run',
     output: 'Number',
     style: 'sensor_blocks',
   },
@@ -348,9 +324,7 @@ const level2 = {
     category('Sensors', 'sensor', [
       block('robot_obstacle'),
       block('robot_distance'),
-      block('robot_pose'),
       block('robot_battery'),
-      block('robot_timer'),
     ]),
     category('Lights', 'light', [
       block('robot_led', { fields: { SIDE: 'all', COLOR: '#3b82f6' } }),

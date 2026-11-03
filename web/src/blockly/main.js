@@ -168,7 +168,6 @@ const robot = {
   drive: (velocity) => control.drive(velocity),
   stop: () => control.stop(),
   distance: (direction) => control.distance(direction),
-  pose: () => control.pose(),
   battery: () => control.battery(),
   led(side, color) {
     control.led(side, color);

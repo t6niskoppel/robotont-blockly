@@ -37,7 +37,6 @@ const fakeRobot = () => {
     stop: () => calls.push(['stop']),
     led: (side, color) => calls.push(['led', side, color]),
     distance: () => 1,
-    pose: () => ({ x: 0, y: 0, yaw: 0 }),
     battery: () => 80,
   };
 };

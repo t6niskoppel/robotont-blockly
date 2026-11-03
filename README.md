@@ -61,7 +61,7 @@ and **Open** exchange it as a JSON file.
 
 **Basic** shows a small block set: move a distance, turn an angle, lights,
 wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
-motion, velocity, distance, odometry pose, battery and timer readings, RGB
+motion, velocity, distance and battery readings, RGB
 lights, loops with break, logic, maths, text, variables and functions.
 
 The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s, so the result

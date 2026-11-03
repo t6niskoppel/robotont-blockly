@@ -80,11 +80,6 @@ export class RobotControl {
     return this.connection.distance(direction);
   }
 
-  pose() {
-    const odom = this.fresh('odom', 'Odometry');
-    return { x: odom.x, y: odom.y, yaw: odom.yaw };
-  }
-
   battery() {
     const percentage = this.fresh('battery', 'Battery').percentage;
     if (percentage === null) throw new Error('The battery level is unknown');

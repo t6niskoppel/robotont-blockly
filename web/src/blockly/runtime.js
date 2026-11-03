@@ -62,7 +62,6 @@ export class Runner {
     this.running = true;
     this.controller = new AbortController();
     const signal = this.controller.signal;
-    const started = performance.now();
     const variables = new Map();
     let depth = 0;
     let lastPass = performance.now();
@@ -89,14 +88,8 @@ export class Runner {
           return v.value;
         case 'distance':
           return this.robot.distance(v.direction);
-        case 'pose': {
-          const pose = this.robot.pose();
-          return v.part === 'heading' ? (pose.yaw * 180) / Math.PI : pose[v.part];
-        }
         case 'battery':
           return this.robot.battery();
-        case 'timer':
-          return (performance.now() - started) / 1000;
         case 'variable':
           if (!variables.has(v.id))
             throw new Error(`Set the variable “${v.name}” before using it.`);
