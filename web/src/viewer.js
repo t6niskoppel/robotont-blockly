@@ -50,7 +50,13 @@ export class RobotViewer {
     return candidates.find((frame) => this.tf.frames().includes(frame)) || candidates[0];
   }
   show() {
-    for (const layer of this.layers) layer.unsubscribe?.();
+    for (const layer of this.layers) {
+      layer.unsubscribe?.();
+      // ros3d unsubscribes a different function than it subscribed and never removes its tf
+      // listener, so the lidar and /tf streams would keep running after the layer is gone.
+      layer.rosTopic?.unsubscribe();
+      layer.points?.sn?.unsubscribeTf();
+    }
     for (const object of this.layerObjects || []) {
       object.unsubscribeTf?.();
       this.viewer.scene.remove(object);
