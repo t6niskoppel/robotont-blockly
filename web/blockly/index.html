@@ -34,10 +34,10 @@
         <section class="editor">
           <div id="workspace" aria-label="Blockly program editor"></div>
           <!-- Moved to the top of the block list by main.js -->
-          <div id="levels" class="segmented" role="group" aria-label="Block set">
-            <button id="level-1" data-level="1">Basic</button
-            ><button id="level-2" data-level="2">All blocks</button>
-          </div>
+          <select id="levels" aria-label="Block set">
+            <option value="1">Basic</option>
+            <option value="2">All blocks</option>
+          </select>
           <div id="banner" class="banner" hidden></div>
           <div class="run-controls">
             <button id="run" class="run" title="Run the program (Ctrl+Enter)">

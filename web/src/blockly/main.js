@@ -113,19 +113,13 @@ element('clear').onclick = () => {
 element('undo').onclick = () => workspace.undo(false);
 element('redo').onclick = () => workspace.undo(true);
 
-const showLevel = () => {
-  for (const button of document.querySelectorAll('[data-level]'))
-    button.setAttribute('aria-pressed', String(button.dataset.level === level));
+element('levels').value = level;
+element('levels').onchange = () => {
+  level = element('levels').value;
+  store('robotont-blockly-level', level);
+  workspace.updateToolbox(toolboxes[level]);
+  workspace.getToolbox().refreshSelection(); // rebuild the scrolling list
 };
-for (const button of document.querySelectorAll('[data-level]'))
-  button.onclick = () => {
-    level = button.dataset.level;
-    store('robotont-blockly-level', level);
-    workspace.updateToolbox(toolboxes[level]);
-    workspace.getToolbox().refreshSelection(); // rebuild the scrolling list
-    showLevel();
-  };
-showLevel();
 
 element('save').onclick = () => {
   const url = URL.createObjectURL(
