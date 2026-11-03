@@ -9,7 +9,7 @@ const element = (id) => document.getElementById(id);
 const connection = new RobotConnection();
 const control = new RobotControl(connection);
 const viewer = new RobotViewer(element('scene'), connection);
-const keys = new Set();
+const keys = new Map(); // key code -> direction, for the keys held down
 let holding = false;
 const log = (message) => {
   const item = document.createElement('li');
@@ -115,6 +115,14 @@ function velocity(direction) {
     right: { vx: 0, vy: -speed, wz: 0 },
     'turn-left': { vx: 0, vy: 0, wz: turn },
     'turn-right': { vx: 0, vy: 0, wz: -turn },
+    'front-left': { vx: speed, vy: speed, wz: 0 },
+    'front-right': { vx: speed, vy: -speed, wz: 0 },
+    'back-left': { vx: -speed, vy: speed, wz: 0 },
+    'back-right': { vx: -speed, vy: -speed, wz: 0 },
+    'front-turn-left': { vx: speed, vy: 0, wz: turn },
+    'front-turn-right': { vx: speed, vy: 0, wz: -turn },
+    'back-turn-left': { vx: -speed, vy: 0, wz: turn },
+    'back-turn-right': { vx: -speed, vy: 0, wz: -turn },
   }[direction];
 }
 function stopMotion() {
@@ -153,20 +161,34 @@ for (const [id, output, suffix] of [
     element(output).textContent = element(id).value + ' ' + suffix;
   };
 }
-const keyDirections = {
-  w: 'front',
-  ArrowUp: 'front',
-  s: 'back',
-  ArrowDown: 'back',
-  a: 'left',
-  ArrowLeft: 'left',
-  d: 'right',
-  ArrowRight: 'right',
-  q: 'turn-left',
-  e: 'turn-right',
+// Same keys as teleop_twist_keyboard: i , j l u o m . drive, Shift moves sideways, k stops.
+// W A S D, the arrows and Q E also work.
+const teleopKeys = {
+  KeyI: ['front', 'front'],
+  Comma: ['back', 'back'],
+  KeyJ: ['turn-left', 'left'],
+  KeyL: ['turn-right', 'right'],
+  KeyU: ['front-turn-left', 'front-left'],
+  KeyO: ['front-turn-right', 'front-right'],
+  Period: ['back-turn-left', 'back-right'],
+  KeyM: ['back-turn-right', 'back-left'],
 };
+const otherKeys = {
+  KeyW: 'front',
+  ArrowUp: 'front',
+  KeyS: 'back',
+  ArrowDown: 'back',
+  KeyA: 'left',
+  ArrowLeft: 'left',
+  KeyD: 'right',
+  ArrowRight: 'right',
+  KeyQ: 'turn-left',
+  KeyE: 'turn-right',
+};
+const directionOf = (event) =>
+  teleopKeys[event.code]?.[event.shiftKey ? 1 : 0] ?? otherKeys[event.code];
 function updateKeys() {
-  const values = [...keys].map((key) => velocity(keyDirections[key]));
+  const values = [...keys.values()].map(velocity);
   if (!values.length) {
     stopMotion();
     return;
@@ -191,20 +213,19 @@ function updateKeys() {
 }
 document.addEventListener('keydown', (event) => {
   if (event.target.closest('input,select,textarea,iframe,[contenteditable]')) return;
-  if (event.code === 'Space' || event.key === 'Escape') {
+  if (event.code === 'Space' || event.code === 'KeyK' || event.key === 'Escape') {
     event.preventDefault();
     if (!event.repeat) emergencyStop();
     return;
   }
-  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-  if (!keyDirections[key] || event.repeat || !connection.ready) return;
+  const direction = directionOf(event);
+  if (!direction || event.repeat || !connection.ready) return;
   event.preventDefault();
-  keys.add(key);
+  keys.set(event.code, direction);
   updateKeys();
 });
 document.addEventListener('keyup', (event) => {
-  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-  if (keys.delete(key)) {
+  if (keys.delete(event.code)) {
     event.preventDefault();
     updateKeys();
   }
