@@ -21,8 +21,6 @@ export function delay(ms, signal) {
 // 50 Hz instead of blocking the page, and a "repeat forever" can run until Stop.
 const LOOP_PERIOD_MS = 20;
 const MAX_CALL_DEPTH = 50;
-const MAX_LINEAR = 0.3;
-const MAX_ANGULAR = 1;
 
 // Control flow inside the interpreter; never shown to the user.
 class Break {}
@@ -268,15 +266,6 @@ export class Runner {
             this.robot.turn(cmd.direction, cmd.speed);
             this.onLog(`Turning ${cmd.direction}`);
             break;
-          case 'velocity': {
-            const vx = await number(cmd.vx, 'Velocity'),
-              vy = await number(cmd.vy, 'Velocity'),
-              wz = await number(cmd.wz, 'Velocity');
-            if (Math.hypot(vx, vy) > MAX_LINEAR + 1e-9 || Math.abs(wz) > MAX_ANGULAR)
-              throw new Error(`Maximum speed is ${MAX_LINEAR} m/s and ${MAX_ANGULAR} rad/s.`);
-            this.robot.drive({ vx, vy, wz });
-            break;
-          }
           case 'wait':
             await delay(cmd.seconds * 1000, signal);
             break;

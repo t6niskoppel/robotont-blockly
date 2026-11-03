@@ -33,7 +33,6 @@ const fakeRobot = () => {
     calls,
     move: (d, s) => calls.push(['move', d, s]),
     turn: (d, s) => calls.push(['turn', d, s]),
-    drive: (v) => calls.push(['drive', v]),
     stop: () => calls.push(['stop']),
     led: (side, color) => calls.push(['led', side, color]),
     ledPixels: (first, last, color) => calls.push(['ledPixels', first, last, color]),
@@ -258,22 +257,6 @@ test('functions take arguments and return values', async () => {
     program,
   );
   assert.deepEqual(said, ['42']);
-});
-
-test('velocity above the limits stops the program with an error', async () => {
-  const robot = fakeRobot();
-  await assert.rejects(
-    new Runner(robot).run([
-      {
-        op: 'velocity',
-        vx: { op: 'number', value: 0.3 },
-        vy: { op: 'number', value: 0.3 },
-        wz: { op: 'number', value: 0 },
-      },
-    ]),
-    /Maximum speed/,
-  );
-  assert.deepEqual(robot.calls, [['stop']]);
 });
 
 test('wait until rechecks the condition and repeat forever runs until Stop', async () => {

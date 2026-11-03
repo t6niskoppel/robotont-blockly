@@ -61,13 +61,13 @@ and **Open** exchange it as a JSON file.
 
 **Basic** shows a small block set: move a distance, turn an angle, lights,
 wait, repeat, if and obstacle checks. **All blocks** adds timed and continuous
-motion, velocity, distance and battery readings, RGB
+motion, distance and battery readings, RGB
 lights, single pixels and ranges of pixels (numbered 0 to 59, pixel 0 at the front), loops with break, logic, maths, text, variables and functions.
 
 The distance and angle blocks are timed at 0.15 m/s and 0.5 rad/s unless the
 **set movement speed** and **set turn speed** blocks change them, so the result
 depends on how the robot accelerates. Continuous motion keeps going until a stop
-block or the end of the program. Velocity is limited to 0.3 m/s and 1 rad/s.
+block or the end of the program. Speeds are limited to 0.3 m/s and 1 rad/s.
 
 The ring in the Robot panel shows the light colours the program sent, not what
 the LED module displays; the side panel warns when no LED module is listening.

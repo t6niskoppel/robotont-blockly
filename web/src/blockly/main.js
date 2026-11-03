@@ -181,7 +181,6 @@ const warnNoLeds = () => {
 const robot = {
   move: (direction, speed) => control.move(direction, speed),
   turn: (direction, speed) => control.turn(direction, speed),
-  drive: (velocity) => control.drive(velocity),
   stop: () => control.stop(),
   distance: (direction) => control.distance(direction),
   battery: () => control.battery(),

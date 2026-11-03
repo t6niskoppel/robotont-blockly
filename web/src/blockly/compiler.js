@@ -178,15 +178,6 @@ export function compile(workspace) {
             speed: fieldNumber(b, 'SPEED', 0.01, b.type === 'robot_drive' ? 0.3 : 1),
           });
           break;
-        case 'robot_velocity':
-          out.push({
-            op: 'velocity',
-            id,
-            vx: input(b, 'VX'),
-            vy: input(b, 'VY'),
-            wz: input(b, 'WZ'),
-          });
-          break;
         case 'robot_stop':
           out.push({ op: 'stop', id });
           break;

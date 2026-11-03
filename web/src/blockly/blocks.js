@@ -121,19 +121,6 @@ const definitions = [
       'Keeps turning while the next blocks run, until a stop block or the end of the program.',
   },
   {
-    type: 'robot_velocity',
-    message0: 'set velocity forward %1 m/s left %2 m/s turn %3 rad/s',
-    args0: [
-      { type: 'input_value', name: 'VX', check: 'Number' },
-      { type: 'input_value', name: 'VY', check: 'Number' },
-      { type: 'input_value', name: 'WZ', check: 'Number' },
-    ],
-    inputsInline: true,
-    ...statement,
-    style: 'motion_blocks',
-    tooltip: 'Moves in any direction at once. Limits: 0.3 m/s and 1 rad/s.',
-  },
-  {
     type: 'robot_stop',
     message0: 'stop moving',
     ...statement,
@@ -359,7 +346,6 @@ const level2 = {
       { kind: 'sep', gap: 24 },
       block('robot_drive'),
       block('robot_spin'),
-      block('robot_velocity', { inputs: { VX: num(0.1), VY: num(0), WZ: num(0) } }),
       block('robot_stop'),
     ]),
     category('Sensors', 'sensor', [
