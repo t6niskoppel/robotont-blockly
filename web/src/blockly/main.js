@@ -45,7 +45,7 @@ const workspace = Blockly.inject('workspace', {
   move: { scrollbars: true, drag: true, wheel: true },
 });
 // The Basic / All blocks switch sits at the top of the block list.
-workspace.getToolbox().HtmlDiv.prepend(element('levels'));
+workspace.getToolbox().HtmlDiv.prepend(element('palette-head'));
 // Recycled blocks stay behind when the list is rebuilt, so every visit builds them fresh.
 workspace.getFlyout().setRecyclingEnabled(false);
 new ResizeObserver(() => Blockly.svgResize(workspace)).observe(element('workspace'));
@@ -112,6 +112,19 @@ element('clear').onclick = () => {
 };
 element('undo').onclick = () => workspace.undo(false);
 element('redo').onclick = () => workspace.undo(true);
+
+// The block list can be folded away to give the editor the whole width.
+const showPalette = (shown) => {
+  const toolbox = workspace.getToolbox();
+  toolbox.setVisible(shown);
+  toolbox.getFlyout().setVisible(shown);
+  element('palette-show').hidden = shown;
+  Blockly.svgResize(workspace);
+  store('robotont-blockly-palette', shown ? 'shown' : 'hidden');
+};
+element('palette-hide').onclick = () => showPalette(false);
+element('palette-show').onclick = () => showPalette(true);
+if (stored('robotont-blockly-palette') === 'hidden') showPalette(false);
 
 element('levels').value = level;
 element('levels').onchange = () => {

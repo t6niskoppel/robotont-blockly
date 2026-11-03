@@ -388,10 +388,28 @@ h2 {
 }
 
 /* The block set dropdown at the top of the block list; the list stays narrow */
-#levels {
-  flex: none;
+#palette-head {
+  display: flex;
+  gap: 4px;
+  align-items: center;
   margin: 6px 4px 8px;
-  padding: 6px 8px;
+}
+#palette-hide {
+  flex: none;
+  padding: 4px 9px;
+  font-size: 16px;
+  line-height: 1.2;
+}
+#palette-show {
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  z-index: 70;
+}
+#levels {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 4px;
   font-size: 13px;
   border: 1px solid var(--line);
   background: #fff;

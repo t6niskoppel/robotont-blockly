@@ -33,11 +33,15 @@
       <main>
         <section class="editor">
           <div id="workspace" aria-label="Blockly program editor"></div>
-          <!-- Moved to the top of the block list by main.js -->
-          <select id="levels" aria-label="Block set">
-            <option value="1">Basic</option>
-            <option value="2">All blocks</option>
-          </select>
+          <!-- The dropdown row moves to the top of the block list in main.js -->
+          <div id="palette-head">
+            <select id="levels" aria-label="Block set">
+              <option value="1">Basic</option>
+              <option value="2">All blocks</option>
+            </select>
+            <button id="palette-hide" class="secondary" title="Hide the blocks" aria-label="Hide the blocks">‹</button>
+          </div>
+          <button id="palette-show" class="secondary" title="Show the blocks" aria-label="Show the blocks" hidden>› Blocks</button>
           <div id="banner" class="banner" hidden></div>
           <div class="run-controls">
             <button id="run" class="run" title="Run the program (Ctrl+Enter)">
