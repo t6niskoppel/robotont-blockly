@@ -107,7 +107,6 @@ element('clear').onclick = () => {
 };
 element('undo').onclick = () => workspace.undo(false);
 element('redo').onclick = () => workspace.undo(true);
-element('tidy').onclick = () => workspace.cleanUp();
 
 const showLevel = () => {
   for (const button of document.querySelectorAll('[data-level]'))
