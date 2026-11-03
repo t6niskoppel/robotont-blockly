@@ -115,18 +115,29 @@ element('clear').onclick = () => {
 element('undo').onclick = () => workspace.undo(false);
 element('redo').onclick = () => workspace.undo(true);
 
-// The block list can be folded away to give the editor the whole width.
-const showPalette = (shown) => {
-  const toolbox = workspace.getToolbox();
-  toolbox.setVisible(shown);
-  toolbox.getFlyout().setVisible(shown);
-  element('palette-show').hidden = shown;
+// The list of blocks can be folded away to give the editor more room; the topics stay.
+// Clicking a topic shows the list again.
+const flyout = workspace.getToolbox().getFlyout();
+const syncPalette = () => {
+  const shown = flyout.isVisible();
+  const button = element('palette-hide');
+  button.textContent = shown ? '‹' : '›';
+  button.title = shown ? 'Hide the blocks' : 'Show the blocks';
+  button.setAttribute('aria-label', button.title);
   Blockly.svgResize(workspace);
   store('robotont-blockly-palette', shown ? 'shown' : 'hidden');
 };
-element('palette-hide').onclick = () => showPalette(false);
-element('palette-show').onclick = () => showPalette(true);
-if (stored('robotont-blockly-palette') === 'hidden') showPalette(false);
+element('palette-hide').onclick = () => {
+  flyout.setVisible(!flyout.isVisible());
+  syncPalette();
+};
+workspace.addChangeListener((event) => {
+  if (event.type === Blockly.Events.TOOLBOX_ITEM_SELECT) setTimeout(syncPalette);
+});
+if (stored('robotont-blockly-palette') === 'hidden') {
+  flyout.setVisible(false);
+  syncPalette();
+}
 
 element('levels').value = level;
 element('levels').onchange = () => {
